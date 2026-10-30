@@ -1,0 +1,133 @@
+/* Arbora — identidade "diário de cultivo": papel bege, verdes de folha, terra e sol.
+   Títulos em Fraunces (serifada orgânica), texto em Figtree (limpa e legível no celular, ao sol). Tema claro só. */
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces";
+@import "@fontsource/figtree/400.css";
+@import "@fontsource/figtree/500.css";
+@import "@fontsource/figtree/600.css";
+@import "@fontsource/figtree/700.css";
+
+:root {
+  --fundo: #F5F1E8;            /* bege papel */
+  --fundo-forte: #EDE6D6;
+  --superficie: #FFFFFF;
+  --superficie-suave: #FBF8F2;
+  --texto: #1E2B22;            /* 14:1 no branco */
+  --texto-suave: #57655B;      /* 6:1 no branco, 5,3:1 no bege */
+  --primaria: #397A4A;         /* verde folha: 5,1:1 no branco */
+  --primaria-forte: #2C6239;
+  --primaria-suave: #E6F0E6;
+  --sobre-primaria: #FFFFFF;
+  --mata: #183D2B;             /* verde-escuro: menu e destaques */
+  --mata-suave: #24543B;
+  --terra: #80664B;            /* 5,3:1 no branco */
+  --terra-suave: #F1E9DD;
+  --sol: #E9C46A;
+  --sol-forte: #8A6410;        /* texto sobre sol suave */
+  --sol-suave: #FBF1D6;
+  --linha: #E6DFD1;
+  --borda: #8F8572;            /* bordas de campo: 3,6:1 */
+  --erro: #B42318;
+  --erro-suave: #FDECEA;
+  --ok: #2C6239;
+  /* Fases do calendário: cores bem distintas (amarelo, verde, terracota) + forma (listra) para quem não distingue cor. */
+  --fase-floracao: #E9C46A;
+  --fase-frutificacao: #7FB069;
+  --fase-colheita: #C8743C;
+  --esqueleto: #ECE5D7;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-fundo: var(--fundo);
+  --color-fundo-forte: var(--fundo-forte);
+  --color-superficie: var(--superficie);
+  --color-superficie-suave: var(--superficie-suave);
+  --color-texto: var(--texto);
+  --color-texto-suave: var(--texto-suave);
+  --color-primaria: var(--primaria);
+  --color-primaria-forte: var(--primaria-forte);
+  --color-primaria-suave: var(--primaria-suave);
+  --color-sobre-primaria: var(--sobre-primaria);
+  --color-mata: var(--mata);
+  --color-mata-suave: var(--mata-suave);
+  --color-terra: var(--terra);
+  --color-terra-suave: var(--terra-suave);
+  --color-sol: var(--sol);
+  --color-sol-forte: var(--sol-forte);
+  --color-sol-suave: var(--sol-suave);
+  --color-linha: var(--linha);
+  --color-borda: var(--borda);
+  --color-erro: var(--erro);
+  --color-erro-suave: var(--erro-suave);
+  --color-ok: var(--ok);
+  --color-floracao: var(--fase-floracao);
+  --color-frutificacao: var(--fase-frutificacao);
+  --color-colheita: var(--fase-colheita);
+  --font-sans: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-titulo: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --radius-cartao: 18px;
+  --radius-controle: 12px;
+  --shadow-cartao: 0 1px 2px rgb(24 61 43 / 0.05), 0 8px 24px rgb(24 61 43 / 0.06);
+  --shadow-flutuante: 0 16px 48px rgb(24 61 43 / 0.18);
+}
+
+@layer base {
+  html, body, #root { min-height: 100%; }
+  body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3 { font-family: var(--font-titulo); text-wrap: balance; line-height: 1.15; letter-spacing: -0.01em; font-weight: 600; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--primaria) 60%, transparent); outline-offset: 2px; }
+  input, select, textarea, button { font: inherit; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: none;
+    border-color: var(--primaria);
+    box-shadow: 0 0 0 4px var(--primaria-suave);
+  }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+}
+
+/* Entrada suave de conteúdo */
+@keyframes surgir { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.surgir { animation: surgir 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* Folha (modal) subindo no celular / aparecendo no computador */
+@keyframes folha-subir { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes folha-aparecer { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes fundo-aparecer { from { opacity: 0; } to { opacity: 1; } }
+.anim-folha { animation: folha-subir 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (min-width: 640px) { .anim-folha { animation-name: folha-aparecer; animation-duration: 0.2s; } }
+.anim-fundo { animation: fundo-aparecer 0.2s ease-out both; }
+
+/* Esqueleto de carregamento */
+.esqueleto { position: relative; overflow: hidden; background: var(--esqueleto); }
+.esqueleto::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.6), transparent);
+  animation: esqueleto-brilho 1.6s ease-in-out infinite;
+}
+@keyframes esqueleto-brilho { to { transform: translateX(100%); } }
+
+/* Meses estimados pela estação (não confirmados): listras, para não parecer certeza. */
+.estimado {
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.55) 0 3px, transparent 3px 7px);
+}
+
+/* Textura discreta de folhas no cabeçalho do início */
+.textura-folhas {
+  background-image:
+    radial-gradient(ellipse 120px 60px at 85% 20%, rgb(255 255 255 / 0.07), transparent 70%),
+    radial-gradient(ellipse 200px 90px at 100% 90%, rgb(233 196 106 / 0.12), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto::after { display: none; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

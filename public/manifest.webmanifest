@@ -1,0 +1,10 @@
+{
+  "name": "Arbora — Gestão do pomar",
+  "short_name": "Arbora",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F1E8",
+  "theme_color": "#183D2B",
+  "icons": [{ "src": "/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
