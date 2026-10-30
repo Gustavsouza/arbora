@@ -27,8 +27,8 @@ const doMes = (d: DataISO, hoje: DataISO) => anoDe(d) === anoDe(hoje) && mesDe(d
 
 function motivoDoCalendario(c: Cultura, fase: Fase): string {
   const texto = textoDaFase(c, fase);
-  const origem = c.mesesConfirmados ? 'meses ajustados por você' : 'meses estimados pela estação escrita na planilha';
-  return texto ? `Calendário: “${texto}” (${origem}).` : `Calendário: ${origem}.`;
+  const origem = c.mesesConfirmados ? 'meses marcados por você' : 'meses aproximados pela estação escrita na planilha';
+  return texto ? `Pela planilha: “${texto}” (${origem}).` : `Pelo calendário: ${origem}.`;
 }
 
 /** Último registro (evento ou colheita) de cada cultura. */
@@ -66,10 +66,10 @@ export function panoramaDoMes(dados: Dados, hoje: DataISO): Panorama {
       const vista = eventosNoMes.filter((e) => EVENTOS_DE_FLORACAO.includes(e.tipo)).sort((a, b) => b.data.localeCompare(a.data))[0];
       floracao.push({
         chave: `flor-${c.id}`, culturaId: c.id, registrado: Boolean(vista),
-        titulo: vista ? `Floração registrada: ${c.nome}` : `${c.nome}: período esperado de floração`,
-        texto: vista ? `${TIPO_EVENTO[vista.tipo].rotulo} em ${dataCurta(vista.data)}.` : 'Se já viu flores, registre a data — isso ajusta o calendário à realidade do sítio.',
+        titulo: vista ? `${c.nome}: florada anotada` : `${c.nome}: época de florada`,
+        texto: vista ? `${TIPO_EVENTO[vista.tipo].rotulo} em ${dataCurta(vista.data)}.` : 'Já viu flores? Anote a data. Assim o calendário fica do jeito do seu sítio.',
         motivo: janelaFlor && !floracaoPrevista
-          ? `Plantio de ${dataCurta(somenteData(dados.plantios, janelaFlor.plantioId))}: “${c.floracaoEsperada ?? ''}” — janela de ${dataCurta(janelaFlor.inicio)} a ${dataCurta(janelaFlor.fim)}.`
+          ? `Plantado em ${dataCurta(somenteData(dados.plantios, janelaFlor.plantioId))}: “${c.floracaoEsperada ?? ''}”, ou seja, entre ${dataCurta(janelaFlor.inicio)} e ${dataCurta(janelaFlor.fim)}.`
           : motivoDoCalendario(c, 'floracao'),
       });
     }
@@ -79,12 +79,12 @@ export function panoramaDoMes(dados: Dados, hoje: DataISO): Panorama {
     if (colheitaPrevista || janelaColheita) {
       colheita.push({
         chave: `colh-${c.id}`, culturaId: c.id, registrado: colheitasNoMes.length > 0,
-        titulo: colheitasNoMes.length ? `Colheita registrada: ${c.nome}` : `${c.nome}: período de colheita previsto`,
+        titulo: colheitasNoMes.length ? `${c.nome}: colheita anotada` : `${c.nome}: época de colheita`,
         texto: colheitasNoMes.length
-          ? `${colheitasNoMes.length} ${colheitasNoMes.length === 1 ? 'colheita registrada' : 'colheitas registradas'} neste mês.`
-          : 'Esta cultura possui período de colheita previsto. Você já observou frutos maduros?',
+          ? `${colheitasNoMes.length} ${colheitasNoMes.length === 1 ? 'colheita anotada' : 'colheitas anotadas'} neste mês.`
+          : 'Pelo calendário, é época de colheita. Já viu frutos maduros?',
         motivo: janelaColheita && !colheitaPrevista
-          ? `Plantio de ${dataCurta(somenteData(dados.plantios, janelaColheita.plantioId))}: “${c.colheitaEsperada ?? ''}” — janela de ${dataCurta(janelaColheita.inicio)} a ${dataCurta(janelaColheita.fim)}.`
+          ? `Plantado em ${dataCurta(somenteData(dados.plantios, janelaColheita.plantioId))}: “${c.colheitaEsperada ?? ''}”, ou seja, entre ${dataCurta(janelaColheita.inicio)} e ${dataCurta(janelaColheita.fim)}.`
           : motivoDoCalendario(c, 'colheita'),
       });
     }
@@ -95,8 +95,8 @@ export function panoramaDoMes(dados: Dados, hoje: DataISO): Panorama {
   for (const p of dados.plantios) {
     if (p.estadoAtual !== 'precisa_atencao') continue;
     atencao.push({
-      chave: `plantio-${p.id}`, culturaId: p.culturaId, titulo: `${nome.get(p.culturaId) ?? 'Cultura'}${p.localizacao ? ` · ${p.localizacao}` : ''}`,
-      texto: p.observacoes || 'Marcado como “precisa de atenção”.', motivo: 'Estado atual do plantio cadastrado por você.',
+      chave: `plantio-${p.id}`, culturaId: p.culturaId, titulo: `${nome.get(p.culturaId) ?? 'Planta'}${p.localizacao ? ` · ${p.localizacao}` : ''}`,
+      texto: p.observacoes || 'Você marcou como “precisa de atenção”.', motivo: 'Você marcou assim em “Como está”.',
     });
   }
   const recentes = dados.eventos
@@ -104,8 +104,8 @@ export function panoramaDoMes(dados: Dados, hoje: DataISO): Panorama {
     .sort((a, b) => b.data.localeCompare(a.data));
   for (const e of recentes) {
     atencao.push({
-      chave: `evento-${e.id}`, culturaId: e.culturaId, titulo: `${nome.get(e.culturaId) ?? 'Cultura'}: ${TIPO_EVENTO[e.tipo].rotulo.toLowerCase()}`,
-      texto: e.observacoes || e.acaoRealizada || 'Sem observações.', motivo: `Registrado em ${dataCurta(e.data)} (últimos ${DIAS_DE_ALERTA} dias).`,
+      chave: `evento-${e.id}`, culturaId: e.culturaId, titulo: `${nome.get(e.culturaId) ?? 'Planta'}: ${TIPO_EVENTO[e.tipo].rotulo.toLowerCase()}`,
+      texto: e.observacoes || e.acaoRealizada || 'Sem observações.', motivo: `Anotado em ${dataCurta(e.data)} (nos últimos ${DIAS_DE_ALERTA} dias).`,
     });
   }
 
@@ -133,9 +133,9 @@ export function sugestoesDaCultura(c: Cultura, dados: Dados, hoje: DataISO): Sug
     const idade = idadeAproximada(pl.dataPlantio, hoje);
     if (idade) {
       out.push({
-        chave: `idade-${pl.id}`, culturaId: c.id, titulo: `Plantio jovem com cerca de ${idade}`,
-        texto: pl.localizacao ? `Local: ${pl.localizacao}.` : 'Plantas jovens podem levar alguns ciclos até florescer; registrar ajuda a acompanhar.',
-        motivo: `Data de plantio informada: ${dataCurta(pl.dataPlantio!)}.`,
+        chave: `idade-${pl.id}`, culturaId: c.id, titulo: `Planta nova, com cerca de ${idade}`,
+        texto: pl.localizacao ? `Local: ${pl.localizacao}.` : 'Planta nova pode demorar alguns anos para florescer. Anotar ajuda a acompanhar.',
+        motivo: `Plantada em ${dataCurta(pl.dataPlantio!)}.`,
       });
     }
   }
@@ -144,9 +144,9 @@ export function sugestoesDaCultura(c: Cultura, dados: Dados, hoje: DataISO): Sug
   if (sem && c.ativo) {
     out.push({
       chave: `sem-${c.id}`, culturaId: c.id,
-      titulo: sem.dias === null ? 'Ainda sem registros' : `Sem registros há ${sem.dias} dias`,
-      texto: 'Que tal anotar como a planta está? Um registro rápido já ajuda a montar o histórico.',
-      motivo: `Nenhum acontecimento ou colheita nos últimos ${DIAS_SEM_REGISTRO} dias.`,
+      titulo: sem.dias === null ? 'Ainda sem anotações' : `Sem anotações há ${sem.dias} dias`,
+      texto: 'Que tal anotar como a planta está? Uma anotação rápida já ajuda.',
+      motivo: `Nada anotado nos últimos ${DIAS_SEM_REGISTRO} dias.`,
     });
   }
   return out;

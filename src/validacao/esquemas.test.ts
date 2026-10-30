@@ -24,6 +24,7 @@ describe('evento', () => {
     const r = esquemaEvento.safeParse({ culturaId: '', plantioId: '', tipo: '', data: hoje, intensidade: '', plantasAfetadas: '', clima: '', observacoes: '', acaoRealizada: '' });
     expect(r.success).toBe(false);
     expect(r.error?.issues.map((i) => i.path[0])).toEqual(['culturaId', 'tipo']);
+    expect(r.error?.issues[0]?.message).toBe('Escolha a planta.');
   });
 });
 

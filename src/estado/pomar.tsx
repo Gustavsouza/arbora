@@ -101,7 +101,7 @@ export function usePomar(): Pomar {
 
 /** Plantios de uma cultura (para os seletores dos formulários). */
 export function rotuloDoPlantio(p: Plantio, indice: number): string {
-  const partes = [p.localizacao || `Plantio ${indice + 1}`];
-  if (p.quantidade) partes.push(`${p.quantidade} ${p.quantidade === 1 ? 'planta' : 'plantas'}`);
+  const partes = [p.localizacao || `Local ${indice + 1}`];
+  if (p.quantidade) partes.push(`${p.quantidade} ${p.quantidade === 1 ? 'pé' : 'pés'}`);
   return partes.join(' · ');
 }

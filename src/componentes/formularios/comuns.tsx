@@ -8,7 +8,7 @@ import { rotuloDoPlantio, usePomar } from '@/estado/pomar';
 import { Entrada, Seletor } from '@/componentes/ui/campos';
 
 /** Culturas ativas agrupadas por grupo (optgroup). A cultura já escolhida aparece mesmo se estiver inativa. */
-export function OpcoesDeCultura({ atual, vazio = 'Escolha a cultura…' }: { atual?: string; vazio?: string }) {
+export function OpcoesDeCultura({ atual, vazio = 'Escolha a planta…' }: { atual?: string; vazio?: string }) {
   const { culturas } = usePomar();
   const visiveis = culturas.filter((c) => c.ativo || c.id === atual);
   const grupos = [...new Set(visiveis.map((c) => c.grupo))].sort(comparaTexto);
@@ -17,21 +17,21 @@ export function OpcoesDeCultura({ atual, vazio = 'Escolha a cultura…' }: { atu
       <option value="">{vazio}</option>
       {grupos.map((g) => (
         <optgroup key={g} label={g}>
-          {visiveis.filter((c) => c.grupo === g).map((c) => <option key={c.id} value={c.id}>{c.nome}{c.ativo ? '' : ' (inativa)'}</option>)}
+          {visiveis.filter((c) => c.grupo === g).map((c) => <option key={c.id} value={c.id}>{c.nome}{c.ativo ? '' : ' (arquivada)'}</option>)}
         </optgroup>
       ))}
     </>
   );
 }
 
-/** Seletor de plantio da cultura escolhida (opcional). Não aparece se a cultura não tem plantio. */
+/** Local da planta escolhida (opcional). Não aparece se a planta não tem local anotado. */
 export function SeletorDePlantio({ culturaId, valor, aoMudar, erro }: { culturaId: string; valor: string; aoMudar: (v: string) => void; erro?: string }) {
   const { plantios } = usePomar();
   const daCultura = plantios.filter((p) => p.culturaId === culturaId);
   if (!culturaId || daCultura.length === 0) return null;
   return (
-    <Seletor rotulo="Plantio" opcional value={valor} onChange={(e) => aoMudar(e.target.value)} erro={erro}
-      ajuda="Use quando tiver plantas da mesma cultura em lugares diferentes.">
+    <Seletor rotulo="Em qual local?" opcional value={valor} onChange={(e) => aoMudar(e.target.value)} erro={erro}
+      ajuda="Para quando a mesma planta está em lugares diferentes do sítio.">
       <option value="">Todos / não sei</option>
       {daCultura.map((p, i) => <option key={p.id} value={p.id}>{rotuloDoPlantio(p, i)}</option>)}
     </Seletor>
@@ -67,7 +67,7 @@ export function MaisDetalhes({ children, abertoInicial = false, resumo }: { chil
     <div className="rounded-controle border border-linha">
       <button type="button" aria-expanded={aberto} onClick={() => setAberto((a) => !a)}
         className="flex min-h-12 w-full items-center justify-between gap-2 px-4 text-left text-sm font-semibold">
-        <span>Mais detalhes <span className="font-normal text-texto-suave">{resumo ?? '(opcional)'}</span></span>
+        <span>Mais detalhes <span className="font-normal text-texto-suave">{resumo ?? '(só se quiser)'}</span></span>
         <ChevronDown aria-hidden className={cn('size-5 transition-transform', aberto && 'rotate-180')} />
       </button>
       {aberto && <div className="grid gap-4 border-t border-linha p-4">{children}</div>}

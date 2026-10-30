@@ -38,12 +38,12 @@ const obrigatorio = (msg: string) => z.string().min(1, msg);
 // ---------------------------------------------------------------------------------------------------------------------
 
 export const esquemaEvento = z.object({
-  culturaId: obrigatorio('Escolha a cultura.'),
+  culturaId: obrigatorio('Escolha a planta.'),
   plantioId: z.string().transform((v) => v || null),
   tipo: z.enum(TIPOS_EVENTO as [TipoEvento, ...TipoEvento[]], { error: 'Escolha o que aconteceu.' }),
-  data: dataNaoFutura('data do acontecimento'),
+  data: dataNaoFutura('data'),
   intensidade: opcional<Intensidade>(['fraca', 'moderada', 'forte']),
-  plantasAfetadas: numeroOpcional(1, 100000, 'Use um número inteiro de 1 a 100.000.', true),
+  plantasAfetadas: numeroOpcional(1, 100000, 'Use um número inteiro, por exemplo 3.', true),
   clima: textoOpcional(200),
   observacoes: textoOpcional(2000),
   acaoRealizada: textoOpcional(1000),
@@ -52,22 +52,22 @@ export type EntradaEvento = z.input<typeof esquemaEvento>;
 export type SaidaEvento = z.output<typeof esquemaEvento>;
 
 export const esquemaColheita = z.object({
-  culturaId: obrigatorio('Escolha a cultura.'),
+  culturaId: obrigatorio('Escolha a planta.'),
   plantioId: z.string().transform((v) => v || null),
   data: dataNaoFutura('data da colheita'),
   quantidade: numeroOpcional(0.001, 1000000, 'Informe uma quantidade maior que zero.').refine((v) => v !== null, 'Informe a quantidade colhida.')
     .transform((v) => v as number),
-  unidade: obrigatorio('Escolha a unidade.'),
-  destino: z.enum(DESTINOS as [Destino, ...Destino[]], { error: 'Escolha o destino.' }),
+  unidade: obrigatorio('Escolha a medida.'),
+  destino: z.enum(DESTINOS as [Destino, ...Destino[]], { error: 'Escolha para onde foi.' }),
   qualidade: opcional<Qualidade>(['otima', 'boa', 'regular', 'ruim']),
-  plantasColhidas: numeroOpcional(1, 100000, 'Use um número inteiro de 1 a 100.000.', true),
+  plantasColhidas: numeroOpcional(1, 100000, 'Use um número inteiro, por exemplo 4.', true),
   observacoes: textoOpcional(2000),
 });
 export type EntradaColheita = z.input<typeof esquemaColheita>;
 export type SaidaColheita = z.output<typeof esquemaColheita>;
 
 export const esquemaPlantio = z.object({
-  quantidade: numeroOpcional(1, 100000, 'Use um número inteiro de 1 a 100.000.', true),
+  quantidade: numeroOpcional(1, 100000, 'Use um número inteiro, por exemplo 15.', true),
   dataPlantio: dataOpcionalNaoFutura,
   estagio: opcional<Estagio>(['muda_recente', 'jovem', 'em_crescimento', 'adulto']),
   localizacao: textoOpcional(120),
@@ -79,12 +79,12 @@ export type EntradaPlantio = z.input<typeof esquemaPlantio>;
 export type SaidaPlantio = z.output<typeof esquemaPlantio>;
 
 const PADROES: Padrao[] = ['estacional', 'varias_epocas', 'continua', 'apos_plantio', 'variavel', 'a_confirmar', 'nao_se_aplica'];
-const dias = numeroOpcional(0, 3650, 'Use de 0 a 3.650 dias.', true);
+const dias = numeroOpcional(0, 3650, 'Use um número de dias, por exemplo 90.', true);
 const mes = z.number().int().min(1).max(12);
 
 export const esquemaCultura = z.object({
   nome: z.string().trim().min(2, 'Escreva o nome (pelo menos 2 letras).').max(80, 'Use no máximo 80 caracteres.'),
-  grupo: z.string().trim().min(2, 'Escreva o grupo, por exemplo: Frutífera.').max(60, 'Use no máximo 60 caracteres.'),
+  grupo: z.string().trim().min(2, 'Escreva o tipo, por exemplo: Frutífera.').max(60, 'Use no máximo 60 caracteres.'),
   descricao: textoOpcional(1000),
   floracaoEsperada: textoOpcional(200),
   colheitaEsperada: textoOpcional(200),
@@ -97,15 +97,15 @@ export const esquemaCultura = z.object({
   observacoes: textoOpcional(2000),
 }).superRefine((v, ctx) => {
   if (v.floracaoDiasMin !== null && v.floracaoDiasMax !== null && v.floracaoDiasMin > v.floracaoDiasMax)
-    ctx.addIssue({ code: 'custom', path: ['floracaoDiasMax'], message: 'O máximo não pode ser menor que o mínimo.' });
+    ctx.addIssue({ code: 'custom', path: ['floracaoDiasMax'], message: 'O “até” não pode ser menor que o “de”.' });
   if (v.colheitaDiasMin !== null && v.colheitaDiasMax !== null && v.colheitaDiasMin > v.colheitaDiasMax)
-    ctx.addIssue({ code: 'custom', path: ['colheitaDiasMax'], message: 'O máximo não pode ser menor que o mínimo.' });
+    ctx.addIssue({ code: 'custom', path: ['colheitaDiasMax'], message: 'O “até” não pode ser menor que o “de”.' });
 });
 export type EntradaCultura = z.input<typeof esquemaCultura>;
 export type SaidaCultura = z.output<typeof esquemaCultura>;
 
 export const esquemaUnidade = z.object({
-  nome: z.string().trim().min(1, 'Escreva o nome da unidade.').max(30, 'Use no máximo 30 caracteres.'),
+  nome: z.string().trim().min(1, 'Escreva o nome da medida.').max(30, 'Use no máximo 30 caracteres.'),
   fatorKg: numeroOpcional(0.000001, 100000, 'Use um número maior que zero, por exemplo 20 (para uma saca de 20 kg).'),
 });
 export type EntradaUnidade = z.input<typeof esquemaUnidade>;

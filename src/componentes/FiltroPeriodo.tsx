@@ -19,8 +19,8 @@ export function FiltroPeriodo({ periodo, aoMudar }: { periodo: Periodo; aoMudar:
   const atalhos = atalhosDePeriodo();
   const ativo = atalhos.find((a) => (a.periodo.de ?? '') === (periodo.de ?? '') && (a.periodo.ate ?? '') === (periodo.ate ?? ''))?.chave;
   return (
-    <fieldset className="grid gap-2">
-      <legend className="mb-1.5 text-sm font-semibold">Período</legend>
+    <fieldset className="@container grid min-w-0 gap-2">
+      <legend className="mb-1.5 text-sm font-semibold">Datas</legend>
       <div className="flex flex-wrap gap-1.5">
         {atalhos.map((a) => (
           <button key={a.chave} type="button" aria-pressed={ativo === a.chave} onClick={() => aoMudar(a.periodo)}
@@ -29,7 +29,7 @@ export function FiltroPeriodo({ periodo, aoMudar }: { periodo: Periodo; aoMudar:
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 gap-2 @xs:grid-cols-2">
         <Entrada rotulo="De" type="date" value={periodo.de ?? ''} onChange={(e) => aoMudar({ ...periodo, de: e.target.value || null })} />
         <Entrada rotulo="Até" type="date" value={periodo.ate ?? ''} onChange={(e) => aoMudar({ ...periodo, ate: e.target.value || null })} />
       </div>

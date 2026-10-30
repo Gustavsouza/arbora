@@ -38,35 +38,35 @@ export function FormColheita({ colheita, inicial, aoConcluir, aoSalvando }: {
     aoSalvando(false);
     if (!r.ok) { toast.error(r.mensagem); return; }
     const nomeUnidade = unidades.find((u) => u.codigo === v.unidade)?.nome ?? v.unidade;
-    toast.success(colheita ? 'Colheita atualizada.' : 'Colheita registrada.', { description: `${culturaPorId.get(v.culturaId)?.nome ?? ''}: ${numero(v.quantidade, 3)} ${nomeUnidade}` });
+    toast.success(colheita ? 'Colheita atualizada.' : 'Colheita anotada!', { description: `${culturaPorId.get(v.culturaId)?.nome ?? ''}: ${numero(v.quantidade, 3)} ${nomeUnidade}` });
     aoConcluir();
   }
 
   return (
     <form id={ID_FORM_COLHEITA} onSubmit={handleSubmit(enviar)} noValidate className="grid gap-5">
-      <Seletor rotulo="Cultura" erro={errors.culturaId?.message}
+      <Seletor rotulo="Planta" erro={errors.culturaId?.message}
         {...register('culturaId', { onChange: (e) => { setValue('plantioId', ''); if (!colheita) setValue('unidade', ultimaUnidade(e.target.value)); } })}>
         <OpcoesDeCultura atual={colheita?.culturaId} />
       </Seletor>
 
       <div className="grid grid-cols-[1fr_auto] items-start gap-2">
-        <Entrada rotulo="Quantidade" inputMode="decimal" placeholder="Ex.: 2,5" autoComplete="off" {...register('quantidade')} erro={errors.quantidade?.message}
+        <Entrada rotulo="Quanto colheu?" inputMode="decimal" placeholder="Ex.: 2,5" autoComplete="off" {...register('quantidade')} erro={errors.quantidade?.message}
           className="[&_input]:text-lg [&_input]:font-semibold" />
-        <Seletor rotulo="Unidade" {...register('unidade')} erro={errors.unidade?.message} className="min-w-32">
+        <Seletor rotulo="Medida" {...register('unidade')} erro={errors.unidade?.message} className="min-w-32">
           {unidades.map((u) => <option key={u.codigo} value={u.codigo}>{u.nome}</option>)}
         </Seletor>
       </div>
 
       <Controller control={control} name="data" render={({ field }) => (
-        <CampoData rotulo="Data da colheita" valor={field.value} aoMudar={field.onChange} erro={errors.data?.message} />
+        <CampoData rotulo="Quando?" valor={field.value} aoMudar={field.onChange} erro={errors.data?.message} />
       )} />
 
       <Controller control={control} name="destino" render={({ field }) => (
-        <Chips<Destino> rotulo="Para onde vai?" colunas={2} valor={field.value} aoMudar={(v) => field.onChange(v || 'consumo_familiar')}
+        <Chips<Destino> rotulo="Para onde foi?" colunas={2} valor={field.value} aoMudar={(v) => field.onChange(v || 'consumo_familiar')}
           opcoes={DESTINOS.map((d) => ({ valor: d, rotulo: DESTINO[d] }))} erro={errors.destino?.message} />
       )} />
 
-      <MaisDetalhes abertoInicial={Boolean(colheita && (colheita.qualidade || colheita.observacoes || colheita.plantasColhidas))} resumo="plantio, qualidade, observações">
+      <MaisDetalhes abertoInicial={Boolean(colheita && (colheita.qualidade || colheita.observacoes || colheita.plantasColhidas))} resumo="local, qualidade, observações">
         <Controller control={control} name="plantioId" render={({ field }) => (
           <SeletorDePlantio culturaId={culturaId} valor={field.value} aoMudar={field.onChange} />
         )} />
@@ -74,7 +74,7 @@ export function FormColheita({ colheita, inicial, aoConcluir, aoSalvando }: {
           <Chips<Qualidade> rotulo="Qualidade" colunas={4} permitirVazio valor={field.value as Qualidade | ''} aoMudar={field.onChange}
             opcoes={(Object.keys(QUALIDADE) as Qualidade[]).map((q) => ({ valor: q, rotulo: QUALIDADE[q] }))} />
         )} />
-        <Entrada rotulo="Plantas colhidas" opcional inputMode="numeric" placeholder="Ex.: 4" {...register('plantasColhidas')} erro={errors.plantasColhidas?.message} />
+        <Entrada rotulo="De quantos pés?" opcional inputMode="numeric" placeholder="Ex.: 4" {...register('plantasColhidas')} erro={errors.plantasColhidas?.message} />
         <AreaTexto rotulo="Observações" opcional {...register('observacoes')} erro={errors.observacoes?.message} />
       </MaisDetalhes>
     </form>

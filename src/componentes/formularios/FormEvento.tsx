@@ -17,7 +17,7 @@ export const ID_FORM_EVENTO = 'form-evento';
 
 const GRUPOS = [
   { grupo: 'ciclo', titulo: 'Ciclo da planta' },
-  { grupo: 'manejo', titulo: 'Manejo' },
+  { grupo: 'manejo', titulo: 'Cuidados' },
   { grupo: 'problema', titulo: 'Problemas' },
 ] as const;
 
@@ -43,7 +43,7 @@ export function FormEvento({ evento, inicial, aoConcluir, aoSalvando }: {
     const r = await salvarEvento(v, evento?.id ?? null);
     aoSalvando(false);
     if (!r.ok) { toast.error(r.mensagem); return; }
-    toast.success(evento ? 'Acontecimento atualizado.' : 'Acontecimento registrado.', { description: TIPO_EVENTO[v.tipo].rotulo });
+    toast.success(evento ? 'Anotação atualizada.' : 'Anotado!', { description: TIPO_EVENTO[v.tipo].rotulo });
     aoConcluir();
   }
 
@@ -56,7 +56,7 @@ export function FormEvento({ evento, inicial, aoConcluir, aoSalvando }: {
 
   return (
     <form id={ID_FORM_EVENTO} onSubmit={handleSubmit(enviar)} noValidate className="grid gap-5">
-      <Seletor rotulo="Cultura" {...register('culturaId', { onChange: () => setValue('plantioId', '') })} erro={errors.culturaId?.message}>
+      <Seletor rotulo="Planta" {...register('culturaId', { onChange: () => setValue('plantioId', '') })} erro={errors.culturaId?.message}>
         <OpcoesDeCultura atual={evento?.culturaId} />
       </Seletor>
 
@@ -80,18 +80,18 @@ export function FormEvento({ evento, inicial, aoConcluir, aoSalvando }: {
       )} />
 
       <MaisDetalhes abertoInicial={Boolean(evento && (evento.observacoes || evento.intensidade || evento.clima || evento.acaoRealizada || evento.plantasAfetadas))}
-        resumo="plantio, intensidade, clima, observações">
+        resumo="local, quanto, tempo, observações">
         <Controller control={control} name="plantioId" render={({ field }) => (
           <SeletorDePlantio culturaId={culturaId} valor={field.value} aoMudar={field.onChange} />
         )} />
         <Controller control={control} name="intensidade" render={({ field }) => (
-          <Chips<Intensidade> rotulo="Intensidade" colunas={3} permitirVazio valor={field.value as Intensidade | ''} aoMudar={field.onChange}
+          <Chips<Intensidade> rotulo="Quanto?" colunas={3} permitirVazio valor={field.value as Intensidade | ''} aoMudar={field.onChange}
             opcoes={(Object.keys(INTENSIDADE) as Intensidade[]).map((v) => ({ valor: v, rotulo: INTENSIDADE[v] }))} />
         )} />
-        <Entrada rotulo="Quantas plantas?" opcional inputMode="numeric" placeholder="Ex.: 3" {...register('plantasAfetadas')} erro={errors.plantasAfetadas?.message} />
+        <Entrada rotulo="Quantos pés?" opcional inputMode="numeric" placeholder="Ex.: 3" {...register('plantasAfetadas')} erro={errors.plantasAfetadas?.message} />
         <div className="grid gap-2">
-          <Entrada rotulo="Clima" opcional placeholder="Toque nas sugestões ou escreva" {...register('clima')} erro={errors.clima?.message} />
-          <div className="flex flex-wrap gap-1.5" aria-label="Sugestões de clima">
+          <Entrada rotulo="Como estava o tempo?" opcional placeholder="Toque abaixo ou escreva" {...register('clima')} erro={errors.clima?.message} />
+          <div className="flex flex-wrap gap-1.5" aria-label="Sugestões de tempo">
             {CLIMAS.map((c) => {
               const ativo = clima.split(',').map((x) => x.trim()).includes(c);
               return (
@@ -104,7 +104,7 @@ export function FormEvento({ evento, inicial, aoConcluir, aoSalvando }: {
           </div>
         </div>
         <AreaTexto rotulo="Observações" opcional placeholder="O que você viu?" {...register('observacoes')} erro={errors.observacoes?.message} />
-        <AreaTexto rotulo="Ação realizada" opcional rows={2} placeholder="Ex.: podei os galhos secos" {...register('acaoRealizada')} erro={errors.acaoRealizada?.message} />
+        <AreaTexto rotulo="O que você fez?" opcional rows={2} placeholder="Ex.: podei os galhos secos" {...register('acaoRealizada')} erro={errors.acaoRealizada?.message} />
       </MaisDetalhes>
     </form>
   );

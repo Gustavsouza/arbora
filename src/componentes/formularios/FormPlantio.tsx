@@ -30,25 +30,25 @@ export function FormPlantio({ culturaId, plantio, aoConcluir, aoSalvando }: {
     const r = await salvarPlantio({ ...v, culturaId }, plantio?.id ?? null);
     aoSalvando(false);
     if (!r.ok) { toast.error(r.mensagem); return; }
-    toast.success(plantio ? 'Plantio atualizado.' : 'Plantio cadastrado.');
+    toast.success(plantio ? 'Local atualizado.' : 'Local adicionado.');
     aoConcluir();
   }
 
   return (
     <form id={ID_FORM_PLANTIO} onSubmit={handleSubmit(enviar)} noValidate className="grid gap-5">
       <div className="grid grid-cols-2 gap-3">
-        <Entrada rotulo="Quantidade" inputMode="numeric" placeholder="Ex.: 15" ajuda="Plantas ou touceiras" {...register('quantidade')} erro={errors.quantidade?.message} />
-        <Entrada rotulo="Sol direto" inputMode="decimal" placeholder="Ex.: 6" ajuda="Horas por dia" {...register('exposicaoSolarHoras')} erro={errors.exposicaoSolarHoras?.message} />
+        <Entrada rotulo="Quantos pés?" inputMode="numeric" placeholder="Ex.: 15" ajuda="Pés ou touceiras" {...register('quantidade')} erro={errors.quantidade?.message} />
+        <Entrada rotulo="Horas de sol" inputMode="decimal" placeholder="Ex.: 6" ajuda="Sol direto por dia" {...register('exposicaoSolarHoras')} erro={errors.exposicaoSolarHoras?.message} />
       </div>
-      <Entrada rotulo="Local no terreno" placeholder="Ex.: Perto do açude" {...register('localizacao')} erro={errors.localizacao?.message} />
-      <Entrada rotulo="Data aproximada do plantio" type="date" max={hojeISO()} opcional {...register('dataPlantio')} erro={errors.dataPlantio?.message}
-        ajuda="Pode ser aproximada. Com ela o sistema calcula a idade e os ciclos “dias após o plantio”." />
+      <Entrada rotulo="Onde fica no sítio?" placeholder="Ex.: Perto do açude" {...register('localizacao')} erro={errors.localizacao?.message} />
+      <Entrada rotulo="Quando foi plantado?" type="date" max={hojeISO()} opcional {...register('dataPlantio')} erro={errors.dataPlantio?.message}
+        ajuda="Pode ser uma data aproximada. Com ela o app calcula a idade da planta." />
       <Controller control={control} name="estagio" render={({ field }) => (
-        <Chips<Estagio> rotulo="Estágio" colunas={2} permitirVazio valor={field.value as Estagio | ''} aoMudar={field.onChange}
+        <Chips<Estagio> rotulo="Fase da planta" colunas={2} permitirVazio valor={field.value as Estagio | ''} aoMudar={field.onChange}
           opcoes={(Object.keys(ESTAGIO) as Estagio[]).map((e) => ({ valor: e, rotulo: ESTAGIO[e] }))} />
       )} />
       <Controller control={control} name="estadoAtual" render={({ field }) => (
-        <Chips<EstadoAtual> rotulo="Estado atual" colunas={2} permitirVazio valor={field.value as EstadoAtual | ''} aoMudar={field.onChange}
+        <Chips<EstadoAtual> rotulo="Como está?" colunas={2} permitirVazio valor={field.value as EstadoAtual | ''} aoMudar={field.onChange}
           opcoes={(Object.keys(ESTADO) as EstadoAtual[]).map((e) => ({ valor: e, rotulo: ESTADO[e] }))} />
       )} />
       <AreaTexto rotulo="Observações" opcional {...register('observacoes')} erro={errors.observacoes?.message} />

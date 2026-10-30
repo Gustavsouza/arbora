@@ -32,7 +32,7 @@ function useNomes() {
     const i = plantios.filter((x) => x.culturaId === p.culturaId).indexOf(p);
     return rotuloDoPlantio(p, i);
   };
-  return { cultura: (id: string) => culturaPorId.get(id)?.nome ?? 'Cultura', plantio, unidade: (c: string) => unidadesPorCodigo.get(c)?.nome ?? c };
+  return { cultura: (id: string) => culturaPorId.get(id)?.nome ?? 'Planta', plantio, unidade: (c: string) => unidadesPorCodigo.get(c)?.nome ?? c };
 }
 
 /** `mostrarCultura`: na página da própria cultura o nome é redundante. `acoes`: editar/excluir. */
@@ -46,9 +46,9 @@ export function LinhaDoTempo({ itens, mostrarCultura = true, acoes = true, compa
 
   async function excluir(x: ItemHistorico) {
     const qual = x.tipo === 'evento' ? `“${TIPO_EVENTO[x.item.tipo].rotulo}” de ${dataCurta(x.item.data)}` : `a colheita de ${dataCurta(x.item.data)}`;
-    if (!(await confirmar({ titulo: 'Excluir registro?', texto: `Excluir ${qual} (${nomes.cultura(x.item.culturaId)})? Não dá para desfazer.` }))) return;
+    if (!(await confirmar({ titulo: 'Apagar anotação?', acao: 'Apagar', texto: `Apagar ${qual} (${nomes.cultura(x.item.culturaId)})? Não dá para desfazer.` }))) return;
     const r = x.tipo === 'evento' ? await apagarEvento(x.item.id) : await apagarColheita(x.item.id);
-    if (r.ok) toast.success('Registro excluído.'); else toast.error(r.mensagem);
+    if (r.ok) toast.success('Anotação apagada.'); else toast.error(r.mensagem);
   }
 
   return (
@@ -76,9 +76,9 @@ export function LinhaDoTempo({ itens, mostrarCultura = true, acoes = true, compa
                 </div>
                 {acoes && (
                   <div className="-mt-1 -mr-2 flex shrink-0">
-                    <Botao variante="discreta" tamanho="icone" aria-label="Editar registro" className="text-texto-suave"
+                    <Botao variante="discreta" tamanho="icone" aria-label="Mudar anotação" className="text-texto-suave"
                       onClick={() => (x.tipo === 'evento' ? editarEvento(x.item) : editarColheita(x.item))}><Pencil /></Botao>
-                    <Botao variante="discreta" tamanho="icone" aria-label="Excluir registro" className="text-texto-suave hover:bg-erro-suave hover:text-erro"
+                    <Botao variante="discreta" tamanho="icone" aria-label="Apagar anotação" className="text-texto-suave hover:bg-erro-suave hover:text-erro"
                       onClick={() => void excluir(x)}><Trash2 /></Botao>
                   </div>
                 )}
@@ -98,14 +98,14 @@ function Detalhes({ x }: { x: ItemHistorico }) {
   if (x.tipo === 'evento') {
     const e = x.item;
     if (e.intensidade) selos.push(INTENSIDADE[e.intensidade]);
-    if (e.plantasAfetadas) selos.push(`${e.plantasAfetadas} ${e.plantasAfetadas === 1 ? 'planta' : 'plantas'}`);
+    if (e.plantasAfetadas) selos.push(`${e.plantasAfetadas} ${e.plantasAfetadas === 1 ? 'pé' : 'pés'}`);
     if (e.clima) selos.push(e.clima);
-    textos = [e.observacoes, e.acaoRealizada ? `Ação: ${e.acaoRealizada}` : null];
+    textos = [e.observacoes, e.acaoRealizada ? `O que foi feito: ${e.acaoRealizada}` : null];
   } else {
     const c = x.item;
     selos.push(DESTINO[c.destino]);
     if (c.qualidade) selos.push(`Qualidade ${QUALIDADE[c.qualidade].toLowerCase()}`);
-    if (c.plantasColhidas) selos.push(`${c.plantasColhidas} ${c.plantasColhidas === 1 ? 'planta' : 'plantas'}`);
+    if (c.plantasColhidas) selos.push(`${c.plantasColhidas} ${c.plantasColhidas === 1 ? 'pé' : 'pés'}`);
     textos = [c.observacoes];
   }
   const t = textos.filter(Boolean);

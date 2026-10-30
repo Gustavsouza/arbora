@@ -29,7 +29,7 @@ export function CulturaPagina() {
   const cultura = pomar.culturaPorId.get(id);
   if (!cultura) {
     return (
-      <EstadoVazio icone={<Sprout />} titulo="Cultura não encontrada" texto="Ela pode ter sido removida ou o endereço está incompleto."
+      <EstadoVazio icone={<Sprout />} titulo="Planta não encontrada" texto="O endereço pode estar incompleto. Volte para a lista e escolha de novo."
         acao={<Link to="/pomar" className="font-semibold text-primaria hover:underline">Voltar para Meu pomar</Link>} />
     );
   }
@@ -53,11 +53,11 @@ function Detalhe({ cultura: c }: { cultura: Cultura }) {
 
   async function alternarAtiva() {
     if (c.ativo && !(await confirmar({
-      titulo: `Inativar ${c.nome}?`, acao: 'Inativar', perigo: false,
-      texto: 'Ela sai das listas e do calendário, mas o histórico fica guardado. Dá para reativar quando quiser.',
+      titulo: `Arquivar ${c.nome}?`, acao: 'Arquivar', perigo: false,
+      texto: 'Ela sai da lista e do calendário, mas as anotações ficam guardadas. Dá para trazer de volta quando quiser.',
     }))) return;
     const r = await definirCulturaAtiva(c.id, !c.ativo);
-    if (r.ok) toast.success(c.ativo ? 'Cultura inativada.' : 'Cultura reativada.'); else toast.error(r.mensagem);
+    if (r.ok) toast.success(c.ativo ? 'Planta arquivada.' : 'Planta de volta ao pomar.'); else toast.error(r.mensagem);
   }
 
   return (
@@ -65,13 +65,13 @@ function Detalhe({ cultura: c }: { cultura: Cultura }) {
       <Link to="/pomar" className="mb-3 inline-flex min-h-10 items-center gap-1.5 text-sm font-semibold text-texto-suave hover:text-primaria">
         <ArrowLeft aria-hidden className="size-4" />Meu pomar
       </Link>
-      <CabecalhoPagina titulo={c.nome} sobretitulo={<span className="flex flex-wrap items-center gap-2">{c.grupo}{!c.ativo && <Selo>Inativa</Selo>}</span>}
+      <CabecalhoPagina titulo={c.nome} sobretitulo={<span className="flex flex-wrap items-center gap-2">{c.grupo}{!c.ativo && <Selo>Arquivada</Selo>}</span>}
         descricao={c.descricao ?? undefined}
         acoes={<>
-          {c.ativo && <Botao onClick={() => registrarEvento({ culturaId: c.id })}><Plus aria-hidden />Acontecimento</Botao>}
+          {c.ativo && <Botao onClick={() => registrarEvento({ culturaId: c.id })}><Plus aria-hidden />Anotar</Botao>}
           {c.ativo && <Botao variante="secundaria" onClick={() => registrarColheita({ culturaId: c.id })}><ShoppingBasket aria-hidden />Colheita</Botao>}
-          <Botao variante="secundaria" onClick={() => setEditando(true)}><Pencil aria-hidden />Editar</Botao>
-          <Botao variante="discreta" onClick={() => void alternarAtiva()}><Power aria-hidden />{c.ativo ? 'Inativar' : 'Reativar'}</Botao>
+          <Botao variante="secundaria" onClick={() => setEditando(true)}><Pencil aria-hidden />Mudar dados</Botao>
+          <Botao variante="discreta" onClick={() => void alternarAtiva()}><Power aria-hidden />{c.ativo ? 'Arquivar' : 'Trazer de volta'}</Botao>
         </>} />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
@@ -92,12 +92,12 @@ function Detalhe({ cultura: c }: { cultura: Cultura }) {
           )}
 
           <Cartao className="grid gap-4 p-5">
-            <TituloSecao icone={<CalendarDays />} titulo="Calendário de referência" descricao="Épocas aproximadas (planilha ou ajustes seus), nunca garantia." />
+            <TituloSecao icone={<CalendarDays />} titulo="Época do ano" descricao="É só uma referência: cada ano pode ser diferente." />
             <dl className="grid gap-3 sm:grid-cols-2">
               {(['floracao', 'colheita'] as const).map((f) => (
                 <div key={f} className="rounded-controle bg-superficie-suave p-3">
-                  <dt className="text-xs font-semibold tracking-wide text-texto-suave uppercase">{f === 'floracao' ? 'Floração esperada' : 'Colheita esperada'}</dt>
-                  <dd className="mt-0.5 font-medium">{textoDaFase(c, f) ?? 'Não informado'}</dd>
+                  <dt className="text-xs font-semibold tracking-wide text-texto-suave uppercase">{f === 'floracao' ? 'Costuma florir' : 'Costuma dar colheita'}</dt>
+                  <dd className="mt-0.5 font-medium">{textoDaFase(c, f) ?? 'Não sabemos ainda'}</dd>
                   <dd className="mt-1"><Selo>{PADRAO[padraoDaFase(c, f) ?? 'a_confirmar']}</Selo></dd>
                 </div>
               ))}
@@ -106,10 +106,10 @@ function Detalhe({ cultura: c }: { cultura: Cultura }) {
             <LegendaFases comEstimado={!c.mesesConfirmados} />
             {(c.floracaoDias || c.colheitaDias) && (
               <p className="text-sm text-texto-suave">
-                Ciclo contado a partir do plantio:
+                Contando do dia em que foi plantado:
                 {c.floracaoDias && <> floração {c.floracaoDias.min}–{c.floracaoDias.max} dias;</>}
                 {c.colheitaDias && <> colheita {c.colheitaDias.min}–{c.colheitaDias.max} dias.</>}
-                {' '}Informe a data de plantio para o sistema calcular as janelas.
+                {' '}Informe quando foi plantado para o app calcular as datas.
               </p>
             )}
             {c.observacoes && <p className="rounded-controle border-l-4 border-sol bg-sol-suave/60 p-3 text-sm"><strong>Cuidados:</strong> {c.observacoes}</p>}
@@ -119,23 +119,23 @@ function Detalhe({ cultura: c }: { cultura: Cultura }) {
         </div>
 
         <Cartao className="grid content-start gap-4 p-5">
-          <TituloSecao icone={<History />} titulo="Histórico" descricao={`${plural(meusEventos.length, 'acontecimento', 'acontecimentos')} e ${plural(minhasColheitas.length, 'colheita', 'colheitas')}`} />
+          <TituloSecao icone={<History />} titulo="Anotações" descricao={`${plural(meusEventos.length, 'anotação', 'anotações')} e ${plural(minhasColheitas.length, 'colheita', 'colheitas')}`} />
           {minhasColheitas.length > 0 && (
             <div className="rounded-controle bg-terra-suave/60 p-3 text-sm">
               <strong>Total colhido:</strong>{' '}
               {[...(total.convertidas > 0 ? [kg(total.kg)] : []), ...outras.map((o) => `${numero(o.total)} ${unidadesPorCodigo.get(o.unidade)?.nome ?? o.unidade}`)].join(' + ')}
-              <span className="block text-xs text-texto-suave">Unidades diferentes não são somadas entre si.</span>
+              <span className="block text-xs text-texto-suave">Medidas diferentes (kg, cachos…) não se somam.</span>
             </div>
           )}
           {meusEventos.length + minhasColheitas.length === 0
-            ? <EstadoVazio icone={<History />} titulo="Nenhum registro ainda" texto="Floração, poda, adubação, colheita… cada registro vira o histórico desta cultura."
-                acao={c.ativo ? <Botao onClick={() => registrarEvento({ culturaId: c.id })}><Plus aria-hidden />Registrar acontecimento</Botao> : undefined} />
+            ? <EstadoVazio icone={<History />} titulo="Nada anotado ainda" texto="Florada, poda, adubação, colheita… tudo o que você anotar aparece aqui."
+                acao={c.ativo ? <Botao onClick={() => registrarEvento({ culturaId: c.id })}><Plus aria-hidden />Anotar o que aconteceu</Botao> : undefined} />
             : <LinhaDoTempo itens={juntarHistorico(meusEventos, minhasColheitas)} mostrarCultura={false} />}
         </Cartao>
       </div>
 
-      <Dialogo aberto={editando} aoMudar={(v) => { if (!salvando) setEditando(v); }} titulo={`Editar ${c.nome}`} largura="max-w-2xl"
-        rodape={<BotoesDoForm form={ID_FORM_CULTURA} salvando={salvando} aoCancelar={() => setEditando(false)} rotulo="Salvar alterações" />}>
+      <Dialogo aberto={editando} aoMudar={(v) => { if (!salvando) setEditando(v); }} titulo={`Mudar dados: ${c.nome}`} largura="max-w-2xl"
+        rodape={<BotoesDoForm form={ID_FORM_CULTURA} salvando={salvando} aoCancelar={() => setEditando(false)} rotulo="Salvar mudanças" />}>
         <FormCultura cultura={c} aoSalvando={setSalvando} aoConcluir={() => setEditando(false)} />
       </Dialogo>
     </>
@@ -155,16 +155,16 @@ function Plantios({ cultura: c, plantios }: { cultura: Cultura; plantios: Planti
   }
 
   async function excluir(p: Plantio) {
-    if (!(await confirmar({ titulo: 'Excluir plantio?', texto: 'Os acontecimentos e colheitas ligados a ele continuam no histórico da cultura, só sem o vínculo com este plantio.' }))) return;
+    if (!(await confirmar({ titulo: 'Apagar este local?', acao: 'Apagar', texto: 'As anotações e colheitas continuam guardadas na planta. Só não vão mais dizer em qual local foi.' }))) return;
     const r = await apagarPlantio(p.id);
-    if (r.ok) toast.success('Plantio excluído.'); else toast.error(r.mensagem);
+    if (r.ok) toast.success('Local apagado.'); else toast.error(r.mensagem);
   }
 
   return (
     <Cartao className="grid gap-4 p-5">
-      <TituloSecao icone={<Sprout />} titulo="Plantios" descricao="Grupos de plantas desta cultura, com quantidade e local."
-        acao={c.ativo ? <Botao variante="secundaria" tamanho="compacto" onClick={() => setEditando('novo')}><Plus aria-hidden />Plantio</Botao> : undefined} />
-      {plantios.length === 0 && <p className="text-sm text-texto-suave">Nenhum plantio cadastrado.</p>}
+      <TituloSecao icone={<Sprout />} titulo="Onde está plantada" descricao="Cada lugar do sítio onde tem essa planta, e quantos pés."
+        acao={c.ativo ? <Botao variante="secundaria" tamanho="compacto" onClick={() => setEditando('novo')}><Plus aria-hidden />Local</Botao> : undefined} />
+      {plantios.length === 0 && <p className="text-sm text-texto-suave">Nenhum local anotado.</p>}
       <ul className="grid gap-3">
         {plantios.map((p, i) => {
           const idade = idadeAproximada(p.dataPlantio, hoje);
@@ -173,40 +173,40 @@ function Plantios({ cultura: c, plantios }: { cultura: Cultura; plantios: Planti
             <li key={p.id} className="grid gap-3 rounded-controle border border-linha p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="flex items-center gap-1.5 font-semibold"><MapPin aria-hidden className="size-4 text-texto-suave" />{p.localizacao || `Plantio ${i + 1}`}</p>
+                  <p className="flex items-center gap-1.5 font-semibold"><MapPin aria-hidden className="size-4 text-texto-suave" />{p.localizacao || `Local ${i + 1}`}</p>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {p.estagio && <Selo tom="verde">{ESTAGIO[p.estagio]}</Selo>}
                     {p.estadoAtual && <Selo tom={p.estadoAtual === 'precisa_atencao' ? 'erro' : 'neutro'}>{ESTADO[p.estadoAtual]}</Selo>}
-                    {incompleto && <Selo tom="sol">Cadastro a completar</Selo>}
+                    {incompleto && <Selo tom="sol">Falta informar</Selo>}
                   </div>
                 </div>
                 <div className="-mt-1 -mr-2 flex shrink-0">
-                  <Botao variante="discreta" tamanho="icone" aria-label="Editar plantio" className="text-texto-suave" onClick={() => setEditando(p)}><Pencil /></Botao>
-                  <Botao variante="discreta" tamanho="icone" aria-label="Excluir plantio" className="text-texto-suave hover:bg-erro-suave hover:text-erro" onClick={() => void excluir(p)}><Trash2 /></Botao>
+                  <Botao variante="discreta" tamanho="icone" aria-label="Mudar dados do local" className="text-texto-suave" onClick={() => setEditando(p)}><Pencil /></Botao>
+                  <Botao variante="discreta" tamanho="icone" aria-label="Apagar local" className="text-texto-suave hover:bg-erro-suave hover:text-erro" onClick={() => void excluir(p)}><Trash2 /></Botao>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
                 {/* Quantidade com + e − (atualização rápida no campo) */}
                 <div className="col-span-2 sm:col-span-1">
-                  <span className="text-xs font-semibold text-texto-suave uppercase">Quantidade</span>
+                  <span className="text-xs font-semibold text-texto-suave uppercase">Quantos pés</span>
                   <div className="mt-1 flex items-center gap-2">
-                    <Botao variante="secundaria" tamanho="icone" aria-label="Diminuir quantidade" disabled={!p.quantidade || p.quantidade <= 1}
-                      onClick={() => void atualizar(p, { quantidade: (p.quantidade ?? 1) - 1 }, 'Quantidade atualizada.')}><Minus /></Botao>
+                    <Botao variante="secundaria" tamanho="icone" aria-label="Um pé a menos" disabled={!p.quantidade || p.quantidade <= 1}
+                      onClick={() => void atualizar(p, { quantidade: (p.quantidade ?? 1) - 1 }, 'Quantidade de pés atualizada.')}><Minus /></Botao>
                     <span className="min-w-12 text-center font-titulo text-xl font-semibold tabular-nums" aria-live="polite">{p.quantidade ?? '—'}</span>
-                    <Botao variante="secundaria" tamanho="icone" aria-label="Aumentar quantidade"
-                      onClick={() => void atualizar(p, { quantidade: (p.quantidade ?? 0) + 1 }, 'Quantidade atualizada.')}><Plus /></Botao>
+                    <Botao variante="secundaria" tamanho="icone" aria-label="Um pé a mais"
+                      onClick={() => void atualizar(p, { quantidade: (p.quantidade ?? 0) + 1 }, 'Quantidade de pés atualizada.')}><Plus /></Botao>
                   </div>
                 </div>
-                <Info rotulo="Plantio" valor={p.dataPlantio ? `${dataCurta(p.dataPlantio)}${idade ? ` (${idade})` : ''}` : 'Não informado'} />
-                <Info rotulo="Sol direto" valor={p.exposicaoSolarHoras !== null ? <span className="inline-flex items-center gap-1"><Sun aria-hidden className="size-4 text-sol-forte" />{numero(p.exposicaoSolarHoras, 1)} h/dia</span> : 'Não informado'} />
+                <Info rotulo="Plantado em" valor={p.dataPlantio ? `${dataCurta(p.dataPlantio)}${idade ? ` (${idade})` : ''}` : 'Não informado'} />
+                <Info rotulo="Sol" valor={p.exposicaoSolarHoras !== null ? <span className="inline-flex items-center gap-1"><Sun aria-hidden className="size-4 text-sol-forte" />{numero(p.exposicaoSolarHoras, 1)} h/dia</span> : 'Não informado'} />
               </div>
 
               <label className="grid gap-1 text-sm">
-                <span className="text-xs font-semibold text-texto-suave uppercase">Estado atual</span>
-                <select value={p.estadoAtual ?? ''} onChange={(e) => void atualizar(p, { estadoAtual: (e.target.value || null) as EstadoAtual | null }, 'Estado atualizado.')}
+                <span className="text-xs font-semibold text-texto-suave uppercase">Como está</span>
+                <select value={p.estadoAtual ?? ''} onChange={(e) => void atualizar(p, { estadoAtual: (e.target.value || null) as EstadoAtual | null }, 'Anotado como está.')}
                   className="min-h-11 rounded-controle border border-borda/70 bg-superficie px-3">
-                  <option value="">Sem informação</option>
+                  <option value="">Não sei / sem anotação</option>
                   {(Object.keys(ESTADO) as EstadoAtual[]).map((e) => <option key={e} value={e}>{ESTADO[e]}</option>)}
                 </select>
               </label>
@@ -217,7 +217,7 @@ function Plantios({ cultura: c, plantios }: { cultura: Cultura; plantios: Planti
       </ul>
 
       <Dialogo aberto={editando !== null} aoMudar={(v) => { if (!salvando && !v) setEditando(null); }}
-        titulo={editando === 'novo' ? `Novo plantio de ${c.nome}` : `Editar plantio de ${c.nome}`}
+        titulo={editando === 'novo' ? `Novo local: ${c.nome}` : `Mudar local: ${c.nome}`}
         rodape={<BotoesDoForm form={ID_FORM_PLANTIO} salvando={salvando} aoCancelar={() => setEditando(null)} />}>
         {editando !== null && (
           <FormPlantio key={editando === 'novo' ? 'novo' : editando.id} culturaId={c.id} plantio={editando === 'novo' ? undefined : editando}

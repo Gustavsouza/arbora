@@ -70,7 +70,7 @@ export function ConfirmacaoProvider({ children }: { children: ReactNode }) {
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <AlertDialog.Cancel asChild><Botao variante="secundaria">Cancelar</Botao></AlertDialog.Cancel>
               <AlertDialog.Action asChild>
-                <Botao variante={pedido?.perigo === false ? 'primaria' : 'perigo'} onClick={() => responder(true)}>{pedido?.acao ?? 'Excluir'}</Botao>
+                <Botao variante={pedido?.perigo === false ? 'primaria' : 'perigo'} onClick={() => responder(true)}>{pedido?.acao ?? 'Apagar'}</Botao>
               </AlertDialog.Action>
             </div>
           </AlertDialog.Content>

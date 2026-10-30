@@ -42,7 +42,8 @@ export function App() {
         <Route path="pomar" element={<ComDados><MeuPomar /></ComDados>} />
         <Route path="pomar/:id" element={<ComDados><CulturaPagina /></ComDados>} />
         <Route path="calendario" element={<ComDados><Calendario /></ComDados>} />
-        <Route path="acontecimentos" element={<ComDados><Acontecimentos /></ComDados>} />
+        <Route path="anotacoes" element={<ComDados><Acontecimentos /></ComDados>} />
+        <Route path="acontecimentos" element={<Navigate to="/anotacoes" replace />} />
         <Route path="colheitas" element={<ComDados><Colheitas /></ComDados>} />
         <Route path="relatorios" element={<ComDados><Relatorios /></ComDados>} />
         <Route path="*" element={<Navigate to="/" replace />} />

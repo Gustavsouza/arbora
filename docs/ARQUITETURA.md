@@ -65,6 +65,25 @@ supabase/
 
 **Preparado para login futuro sem antecipar complexidade.** O acesso fica todo em `servicos/`. As políticas do MVP têm nome próprio (`mvp_anon_*`) e são trocáveis. Ver [EVOLUCAO_FUTURA.md](EVOLUCAO_FUTURA.md).
 
+## Linguagem da interface
+
+O usuário entende de roça, não de sistemas. As telas usam palavras do dia a dia. O código e o banco mantêm os nomes técnicos, e nenhum nome de tabela ou coluna mudou:
+
+| No código / banco | Na tela |
+|---|---|
+| cultura (`culturas`) | planta |
+| grupo | tipo (Frutífera, Anual…) |
+| plantio (`plantios`) | local (“onde está plantada”, “quantos pés”) |
+| evento / acontecimento (`eventos`) | anotação · “Anotar o que aconteceu” (rota `/anotacoes`) |
+| inativa (`ativo = false`) | arquivada |
+| estágio · estado atual | fase da planta · como está |
+| intensidade · ação realizada | quanto? · o que você fez |
+| destino · unidade | para onde foi · medida |
+| meses estimados | aproximado pela estação |
+| excluir | apagar |
+
+Texto novo deve seguir essa tabela: frases curtas, sem jargão de sistema (cadastrar, registro, período, indicador), e as previsões sempre como referência (“pode estar florindo”), nunca como certeza.
+
 ## Identidade visual
 
 “Diário de cultivo”: fundo bege (`#F5F1E8`), verde folha (`#397A4A`) para ações, verde-escuro (`#183D2B`) no menu e no destaque do início, terra (`#80664B`) e sol (`#E9C46A`). As fases do calendário têm cores distintas: floração amarela, frutificação verde, colheita terracota. Meses **estimados** aparecem listrados, para não parecerem certeza. Os botões têm pelo menos 48 px de altura. No celular, os modais viram folhas que sobem do rodapé, e os selects são nativos, abrindo o seletor do próprio aparelho.

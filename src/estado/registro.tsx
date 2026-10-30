@@ -38,14 +38,14 @@ export function RegistroProvider({ children }: { children: ReactNode }) {
 
   const ehEvento = pedido?.tipo === 'evento';
   const editando = pedido ? (pedido.tipo === 'evento' ? Boolean(pedido.evento) : Boolean(pedido.colheita)) : false;
-  const titulo = ehEvento ? (editando ? 'Editar acontecimento' : 'Registrar acontecimento') : (editando ? 'Editar colheita' : 'Registrar colheita');
+  const titulo = ehEvento ? (editando ? 'Mudar anotação' : 'Anotar o que aconteceu') : (editando ? 'Mudar colheita' : 'Anotar colheita');
 
   return (
     <Contexto.Provider value={valor}>
       {children}
       <Dialogo aberto={aberto} aoMudar={(v) => { if (!salvando) setAberto(v); }} titulo={titulo}
-        descricao={ehEvento ? 'Escolha a cultura e o que aconteceu. O resto é opcional.' : 'Quantidade, unidade e destino. O resto é opcional.'}
-        rodape={<BotoesDoForm form={ehEvento ? ID_FORM_EVENTO : ID_FORM_COLHEITA} salvando={salvando} aoCancelar={fechar} rotulo={editando ? 'Salvar alterações' : 'Salvar'} />}>
+        descricao={ehEvento ? 'Escolha a planta e o que aconteceu. O resto só se quiser.' : 'Quanto colheu e para onde foi. O resto só se quiser.'}
+        rodape={<BotoesDoForm form={ehEvento ? ID_FORM_EVENTO : ID_FORM_COLHEITA} salvando={salvando} aoCancelar={fechar} rotulo={editando ? 'Salvar mudanças' : 'Salvar'} />}>
         {pedido?.tipo === 'evento' && <FormEvento key={versao} evento={pedido.evento} inicial={pedido.inicial} aoConcluir={fechar} aoSalvando={setSalvando} />}
         {pedido?.tipo === 'colheita' && <FormColheita key={versao} colheita={pedido.colheita} inicial={pedido.inicial} aoConcluir={fechar} aoSalvando={setSalvando} />}
       </Dialogo>

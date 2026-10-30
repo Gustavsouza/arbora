@@ -12,7 +12,7 @@ export function CabecalhoPagina({ titulo, descricao, acoes, sobretitulo }: { tit
         <h1 className="text-[1.75rem] sm:text-[2rem]">{titulo}</h1>
         {descricao && <p className="mt-1 max-w-2xl text-texto-suave">{descricao}</p>}
       </div>
-      {acoes && <div className="flex flex-wrap gap-2">{acoes}</div>}
+      {acoes && <div className="flex flex-wrap gap-2 sm:shrink-0 sm:flex-nowrap">{acoes}</div>}
     </header>
   );
 }

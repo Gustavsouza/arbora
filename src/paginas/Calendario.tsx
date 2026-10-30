@@ -31,9 +31,9 @@ export function Calendario() {
   return (
     <>
       <CabecalhoPagina titulo="Calendário do pomar"
-        descricao="Janelas de referência de floração, frutificação e colheita. São aproximadas: altitude, variedade, idade e clima mudam os ciclos." />
+        descricao="Quando cada planta costuma florir, formar frutos e dar colheita. É só uma referência: altura do terreno, variedade, idade da planta e o tempo mudam tudo." />
       <div className="mb-4 grid gap-3 sm:flex sm:items-end sm:justify-between">
-        <div role="radiogroup" aria-label="Visualização" className="grid grid-cols-2 rounded-controle border border-linha bg-superficie p-1 sm:w-72">
+        <div role="radiogroup" aria-label="Ver" className="grid grid-cols-2 rounded-controle border border-linha bg-superficie p-1 sm:w-72">
           {(['anual', 'mensal'] as Visao[]).map((v) => (
             <button key={v} type="button" role="radio" aria-checked={visao === v} onClick={() => definir('visao', v === 'anual' ? '' : v)}
               className={cn('min-h-10 rounded-lg text-sm font-semibold', visao === v ? 'bg-primaria text-white' : 'text-texto-suave hover:bg-fundo')}>
@@ -41,8 +41,8 @@ export function Calendario() {
             </button>
           ))}
         </div>
-        <Seletor rotulo="Grupo" value={grupo} onChange={(e) => definir('grupo', e.target.value)} className="sm:w-64">
-          <option value="">Todos os grupos</option>
+        <Seletor rotulo="Tipo de planta" value={grupo} onChange={(e) => definir('grupo', e.target.value)} className="sm:w-64">
+          <option value="">Todos os tipos</option>
           {grupos.map((g) => <option key={g} value={g}>{g}</option>)}
         </Seletor>
       </div>
@@ -61,14 +61,14 @@ function VisaoAnual({ culturas }: { culturas: Cultura[] }) {
       <Cartao className="grid grid-cols-1 gap-4 p-4 sm:p-5">
         <LegendaFases />
         {comMeses.length === 0 ? (
-          <EstadoVazio icone={<CalendarDays />} titulo="Nenhuma cultura com meses marcados" texto="Abra uma cultura em “Meu pomar”, toque em Editar e marque os meses que você conhece." />
+          <EstadoVazio icone={<CalendarDays />} titulo="Nenhuma planta com meses marcados" texto="Abra uma planta em “Meu pomar”, toque em “Mudar dados” e marque os meses que você conhece." />
         ) : (
           <div className="relative overflow-x-auto">
             <table className="w-full min-w-[17.5rem] table-fixed border-separate border-spacing-0 text-sm">
-              <caption className="sr-only">Calendário anual: culturas nas linhas, meses nas colunas</caption>
+              <caption className="sr-only">Calendário do ano: plantas nas linhas, meses nas colunas</caption>
               <thead>
                 <tr>
-                  <th scope="col" className="sticky left-0 z-10 w-[6.25rem] bg-superficie pr-2 pb-2 text-left text-xs font-semibold text-texto-suave sm:w-44">Cultura</th>
+                  <th scope="col" className="sticky left-0 z-10 w-[6.25rem] bg-superficie pr-2 pb-2 text-left text-xs font-semibold text-texto-suave sm:w-44">Planta</th>
                   {MESES_CURTOS.map((m, i) => (
                     <th key={m} scope="col" className={cn('pb-2 text-center text-xs font-semibold', mesAtual === i + 1 ? 'text-primaria' : 'text-texto-suave')}>
                       <span aria-hidden className="sm:hidden">{m.slice(0, 1)}</span><span className="max-sm:sr-only">{m}</span>{mesAtual === i + 1 && <span className="sr-only"> (mês atual)</span>}
@@ -91,7 +91,7 @@ function VisaoAnual({ culturas }: { culturas: Cultura[] }) {
                               <span key={f} className={cn('rounded-[3px]', fases.includes(f) ? [COR_FASE[f], !c.mesesConfirmados && 'estimado'] : 'bg-transparent')} />
                             ))}
                           </div>
-                          <span className="sr-only">{fases.length ? fases.map((f) => FASE[f]).join(', ') : 'nada previsto'}</span>
+                          <span className="sr-only">{fases.length ? fases.map((f) => FASE[f]).join(', ') : 'nada'}</span>
                         </td>
                       );
                     })}
@@ -101,12 +101,12 @@ function VisaoAnual({ culturas }: { culturas: Cultura[] }) {
             </table>
           </div>
         )}
-        <p className="text-xs text-texto-suave">Cada célula tem três faixas: floração (em cima), frutificação (meio) e colheita (embaixo). A planilha não descrevia frutificação: ela aparece quando você marcar os meses.</p>
+        <p className="text-xs text-texto-suave">Cada mês tem três faixas: floração (em cima), frutos se formando (meio) e colheita (embaixo). A planilha não tinha a época dos frutos: ela aparece quando você marcar os meses.</p>
       </Cartao>
 
       {semMeses.length > 0 && (
         <Cartao className="grid gap-3 p-5">
-          <TituloSecao icone={<Info />} titulo="Sem meses fixos" descricao="O texto da planilha não indica uma estação (ex.: “Variável”, “Várias floradas”). Ele foi preservado e não virou mês." />
+          <TituloSecao icone={<Info />} titulo="Sem época certa" descricao="Na planilha estas plantas estavam como “Variável”, “Várias floradas” etc. Por isso não têm mês marcado." />
           <ul className="grid divide-y divide-linha sm:grid-cols-2 sm:gap-x-6 sm:divide-y-0">
             {semMeses.map((c) => (
               <li key={c.id} className="sm:border-b sm:border-linha">
@@ -139,9 +139,9 @@ function VisaoMensal({ culturas }: { culturas: Cultura[] }) {
   /** Por fase: culturas com o mês marcado e janelas calculadas pelo plantio que passam pelo mês. */
   const porFase = (f: Fase) => culturas.flatMap((c) => {
     const itens: { cultura: Cultura; nota: string }[] = [];
-    if (mesesDaFase(c, f).includes(ref.mes)) itens.push({ cultura: c, nota: c.mesesConfirmados ? 'marcado por você' : 'estimado pela estação' });
+    if (mesesDaFase(c, f).includes(ref.mes)) itens.push({ cultura: c, nota: c.mesesConfirmados ? 'marcado por você' : 'aproximado pela estação' });
     for (const j of janelasDoPlantio(c, plantios)) {
-      if (j.fase === f && janelaNoMes(j, ref.ano, ref.mes)) itens.push({ cultura: c, nota: `pelo plantio: ${dataCurta(j.inicio)} a ${dataCurta(j.fim)}` });
+      if (j.fase === f && janelaNoMes(j, ref.ano, ref.mes)) itens.push({ cultura: c, nota: `pela data de plantio: ${dataCurta(j.inicio)} a ${dataCurta(j.fim)}` });
     }
     return itens;
   });
@@ -158,11 +158,11 @@ function VisaoMensal({ culturas }: { culturas: Cultura[] }) {
       <div className="grid gap-4 md:grid-cols-3">
         {FASES.map((f) => {
           const itens = porFase(f);
-          const titulo = { floracao: 'Podem florescer', frutificacao: 'Frutificação esperada', colheita: 'Colheita prevista' }[f];
+          const titulo = { floracao: 'Podem florir', frutificacao: 'Frutos se formando', colheita: 'Época de colheita' }[f];
           return (
             <Cartao key={f} className="grid content-start gap-3 p-4">
               <h3 className="flex items-center gap-2 text-base"><span aria-hidden className={cn('size-3 rounded-full', COR_FASE[f])} />{titulo}<span className="ml-auto text-sm font-normal text-texto-suave">{itens.length}</span></h3>
-              {itens.length === 0 ? <p className="text-sm text-texto-suave">{f === 'frutificacao' ? 'Nenhuma cultura com frutificação marcada para este mês.' : 'Nada previsto no calendário para este mês.'}</p> : (
+              {itens.length === 0 ? <p className="text-sm text-texto-suave">{f === 'frutificacao' ? 'Nenhuma planta com frutos marcados para este mês.' : 'Nenhuma planta neste mês.'}</p> : (
                 <ul className="grid gap-1.5">
                   {itens.map(({ cultura, nota }) => (
                     <li key={`${cultura.id}-${nota}`}>
@@ -181,14 +181,14 @@ function VisaoMensal({ culturas }: { culturas: Cultura[] }) {
 
       {variaveis.length > 0 && (
         <p className="rounded-controle bg-superficie-suave p-3 text-sm text-texto-suave">
-          <strong className="text-texto">Podem acontecer em qualquer época</strong> (várias floradas ou ao longo do ano, pela planilha): {variaveis.map((c) => c.nome).join(', ')}.
+          <strong className="text-texto">Podem florir ou dar colheita em qualquer época</strong> (pela planilha): {variaveis.map((c) => c.nome).join(', ')}.
         </p>
       )}
 
       <Cartao className="grid gap-4 p-5">
-        <TituloSecao icone={<CalendarDays />} titulo="Registrado neste mês" descricao="O que foi efetivamente observado e anotado." />
+        <TituloSecao icone={<CalendarDays />} titulo="Anotado neste mês" descricao="O que você viu e anotou de verdade." />
         {registros.length === 0
-          ? <p className="text-sm text-texto-suave">Nenhum acontecimento ou colheita registrado em {nomeDoMes(ref.mes)} de {ref.ano}.</p>
+          ? <p className="text-sm text-texto-suave">Nada anotado em {nomeDoMes(ref.mes)} de {ref.ano}.</p>
           : <LinhaDoTempo itens={registros} />}
       </Cartao>
     </div>

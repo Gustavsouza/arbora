@@ -16,7 +16,7 @@ export function FaixaDeMeses({ cultura, mesAtual, rotulos = true }: { cultura: C
           {MESES_CURTOS.map((m, i) => <span key={m} className={cn(mesAtual === i + 1 && 'text-primaria')}>{m.slice(0, 1)}<span className="hidden sm:inline">{m.slice(1)}</span></span>)}
         </div>
       )}
-      {fases.length === 0 && <p className="text-sm text-texto-suave">Sem meses cadastrados.</p>}
+      {fases.length === 0 && <p className="text-sm text-texto-suave">Nenhum mês marcado.</p>}
       {fases.map((f) => {
         const meses = mesesDaFase(cultura, f);
         return (
@@ -45,7 +45,7 @@ export function LegendaFases({ comEstimado = true }: { comEstimado?: boolean }) 
   return (
     <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-texto-suave">
       {FASES.map((f) => <li key={f} className="flex items-center gap-1.5"><span aria-hidden className={cn('size-3.5 rounded-[4px]', COR_FASE[f])} />{FASE[f]}</li>)}
-      {comEstimado && <li className="flex items-center gap-1.5"><span aria-hidden className="estimado size-3.5 rounded-[4px] bg-texto-suave/50" />Estimado pela estação (planilha)</li>}
+      {comEstimado && <li className="flex items-center gap-1.5"><span aria-hidden className="estimado size-3.5 rounded-[4px] bg-texto-suave/50" />Aproximado pela estação (da planilha)</li>}
     </ul>
   );
 }

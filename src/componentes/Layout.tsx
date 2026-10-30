@@ -11,7 +11,7 @@ const ITENS = [
   { para: '/', rotulo: 'Início', curto: 'Início', Icone: House },
   { para: '/pomar', rotulo: 'Meu pomar', curto: 'Pomar', Icone: TreeDeciduous },
   { para: '/calendario', rotulo: 'Calendário', curto: 'Calendário', Icone: CalendarDays },
-  { para: '/acontecimentos', rotulo: 'Acontecimentos', curto: 'Diário', Icone: NotebookPen },
+  { para: '/anotacoes', rotulo: 'Anotações', curto: 'Anotações', Icone: NotebookPen },
   { para: '/colheitas', rotulo: 'Colheitas', curto: 'Colheitas', Icone: ShoppingBasket },
   { para: '/relatorios', rotulo: 'Relatórios', curto: 'Relatórios', Icone: ChartColumn },
 ] as const;
@@ -39,8 +39,8 @@ export function Layout() {
           ))}
         </nav>
         <div className="mt-auto grid gap-2">
-          <Botao variante="sol" onClick={() => registrarEvento()}><Plus aria-hidden />Registrar acontecimento</Botao>
-          <Botao onClick={() => registrarColheita()} className="bg-white/10 hover:bg-white/15"><ShoppingBasket aria-hidden />Registrar colheita</Botao>
+          <Botao variante="sol" onClick={() => registrarEvento()}><Plus aria-hidden />Anotar o que aconteceu</Botao>
+          <Botao onClick={() => registrarColheita()} className="bg-white/10 hover:bg-white/15"><ShoppingBasket aria-hidden />Anotar colheita</Botao>
         </div>
       </aside>
 
@@ -61,7 +61,7 @@ export function Layout() {
       <button type="button" onClick={() => registrarEvento()}
         className="fixed right-4 z-30 flex min-h-14 items-center gap-2 rounded-full bg-primaria pr-5 pl-4 font-semibold text-white shadow-flutuante transition-transform active:scale-95 lg:hidden"
         style={{ bottom: 'calc(5.25rem + env(safe-area-inset-bottom))' }}>
-        <Plus aria-hidden className="size-6" />Registrar acontecimento
+        <Plus aria-hidden className="size-6" />Anotar o que aconteceu
       </button>
 
       <nav aria-label="Principal" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-6 border-t border-linha bg-superficie/95 backdrop-blur lg:hidden"

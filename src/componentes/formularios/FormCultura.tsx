@@ -43,7 +43,7 @@ export function FormCultura({ cultura, aoConcluir, aoSalvando }: { cultura?: Cul
     }, cultura?.id ?? null);
     aoSalvando(false);
     if (!r.ok) { toast.error(r.mensagem); return; }
-    toast.success(cultura ? 'Cultura atualizada.' : 'Cultura cadastrada.', { description: r.valor.nome });
+    toast.success(cultura ? 'Planta atualizada.' : 'Planta adicionada.', { description: r.valor.nome });
     aoConcluir(r.valor);
   }
 
@@ -53,21 +53,21 @@ export function FormCultura({ cultura, aoConcluir, aoSalvando }: { cultura?: Cul
     <form id={ID_FORM_CULTURA} onSubmit={handleSubmit(enviar)} noValidate className="grid gap-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Entrada rotulo="Nome" placeholder="Ex.: Jabuticaba" {...register('nome')} erro={errors.nome?.message} />
-        <Entrada rotulo="Grupo" placeholder="Ex.: Frutífera" list="grupos-de-cultura" {...register('grupo')} erro={errors.grupo?.message} />
+        <Entrada rotulo="Tipo" placeholder="Ex.: Frutífera" list="grupos-de-cultura" {...register('grupo')} erro={errors.grupo?.message} />
         <datalist id="grupos-de-cultura">{grupos.map((g) => <option key={g} value={g} />)}</datalist>
       </div>
       <AreaTexto rotulo="Descrição" opcional rows={2} {...register('descricao')} erro={errors.descricao?.message} />
 
       <section className="grid gap-4 rounded-controle bg-superficie-suave p-4">
         <div>
-          <h3 className="text-base">Calendário de referência</h3>
-          <p className="text-sm text-texto-suave">Épocas aproximadas, nunca garantias. Marque só o que você conhece; o resto pode ficar como texto.</p>
+          <h3 className="text-base">Época de florada e colheita</h3>
+          <p className="text-sm text-texto-suave">É só uma referência: cada ano pode ser diferente. Marque só os meses que você conhece.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Entrada rotulo="Floração esperada (texto)" opcional placeholder="Ex.: Primavera–verão" {...register('floracaoEsperada')} erro={errors.floracaoEsperada?.message} />
-          <Seletor rotulo="Tipo de floração" {...register('floracaoPadrao')}>{opcoesPadrao}</Seletor>
-          <Entrada rotulo="Colheita esperada (texto)" opcional placeholder="Ex.: Verão–outono" {...register('colheitaEsperada')} erro={errors.colheitaEsperada?.message} />
-          <Seletor rotulo="Tipo de colheita" {...register('colheitaPadrao')}>{opcoesPadrao}</Seletor>
+          <Entrada rotulo="Quando costuma florir" opcional placeholder="Ex.: Primavera–verão" {...register('floracaoEsperada')} erro={errors.floracaoEsperada?.message} />
+          <Seletor rotulo="A floração é…" {...register('floracaoPadrao')}>{opcoesPadrao}</Seletor>
+          <Entrada rotulo="Quando costuma dar colheita" opcional placeholder="Ex.: Verão–outono" {...register('colheitaEsperada')} erro={errors.colheitaEsperada?.message} />
+          <Seletor rotulo="A colheita é…" {...register('colheitaPadrao')}>{opcoesPadrao}</Seletor>
         </div>
         {(floracaoPadrao === 'apos_plantio' || colheitaPadrao === 'apos_plantio') && (
           <div className="grid grid-cols-2 gap-3">
@@ -79,21 +79,21 @@ export function FormCultura({ cultura, aoConcluir, aoSalvando }: { cultura?: Cul
               <Entrada rotulo="Colheita: de (dias)" inputMode="numeric" {...register('colheitaDiasMin')} erro={errors.colheitaDiasMin?.message} />
               <Entrada rotulo="até (dias)" inputMode="numeric" {...register('colheitaDiasMax')} erro={errors.colheitaDiasMax?.message} />
             </>}
-            <p className="col-span-2 text-[0.8125rem] text-texto-suave">Contados a partir da data de plantio de cada plantio.</p>
+            <p className="col-span-2 text-[0.8125rem] text-texto-suave">Dias contados a partir do dia em que foi plantado.</p>
           </div>
         )}
         <Controller control={control} name="mesesFloracao" render={({ field }) => (
           <SeletorDeMeses rotulo="Meses de floração" valor={field.value} aoMudar={field.onChange} cor="var(--fase-floracao)" />
         )} />
         <Controller control={control} name="mesesFrutificacao" render={({ field }) => (
-          <SeletorDeMeses rotulo="Meses de frutificação" valor={field.value} aoMudar={field.onChange} cor="var(--fase-frutificacao)" />
+          <SeletorDeMeses rotulo="Meses com frutos se formando" valor={field.value} aoMudar={field.onChange} cor="var(--fase-frutificacao)" />
         )} />
         <Controller control={control} name="mesesColheita" render={({ field }) => (
           <SeletorDeMeses rotulo="Meses de colheita" valor={field.value} aoMudar={field.onChange} cor="var(--fase-colheita)" />
         )} />
       </section>
 
-      <AreaTexto rotulo="Cuidados / observações sobre o ciclo" opcional {...register('observacoes')} erro={errors.observacoes?.message} />
+      <AreaTexto rotulo="Cuidados e observações" opcional {...register('observacoes')} erro={errors.observacoes?.message} />
     </form>
   );
 }

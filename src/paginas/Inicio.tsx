@@ -49,45 +49,45 @@ export function Inicio() {
         <h1 className="mt-1 text-[1.875rem] text-white sm:text-[2.25rem]">{saudacao()}! {nomeDoMes(mes).replace(/^./, (l) => l.toUpperCase())} no pomar</h1>
         <p className="mt-2 max-w-xl text-white/80">
           {panorama.floracao.length || panorama.colheita.length
-            ? <>Pelo calendário, {plural(panorama.floracao.length, 'cultura pode', 'culturas podem')} estar florindo e {plural(panorama.colheita.length, 'tem', 'têm')} colheita prevista neste mês. São referências aproximadas: confirme no campo e registre.</>
-            : <>Nenhuma floração ou colheita prevista no calendário para este mês. Registre o que observar no campo.</>}
+            ? <>Pela época do ano, {plural(panorama.floracao.length, 'planta pode', 'plantas podem')} estar florindo e {plural(panorama.colheita.length, 'pode', 'podem')} estar dando colheita. Confira no sítio e anote o que viu.</>
+            : <>Pelo calendário, nada deve florir nem dar colheita neste mês. Anote o que você vir no sítio.</>}
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Botao variante="sol" onClick={() => registrarEvento()}><Plus aria-hidden />Registrar acontecimento</Botao>
-          <Botao onClick={() => registrarColheita()} className="bg-white/12 hover:bg-white/20"><ShoppingBasket aria-hidden />Registrar colheita</Botao>
+          <Botao variante="sol" onClick={() => registrarEvento()}><Plus aria-hidden />Anotar o que aconteceu</Botao>
+          <Botao onClick={() => registrarColheita()} className="bg-white/12 hover:bg-white/20"><ShoppingBasket aria-hidden />Anotar colheita</Botao>
         </div>
       </section>
 
       {/* Indicadores */}
-      <section aria-label="Indicadores" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Indicador icone={<TreeDeciduous />} rotulo="Culturas ativas" valor={ativas.length} detalhe={culturas.length > ativas.length ? `${culturas.length - ativas.length} inativas` : 'cadastradas'} />
-        <Indicador icone={<Sprout />} rotulo="Plantas / touceiras" valor={numero(plantas, 0)}
-          detalhe={plantiosSemQtd ? `${plural(plantiosSemQtd, 'plantio', 'plantios')} sem quantidade` : 'informadas nos plantios'} />
-        <Indicador icone={<NotebookPen />} rotulo={`Acontecimentos em ${ano}`} valor={doAno(eventos, ano).length} tom="sol" />
+      <section aria-label="Números do sítio" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Indicador icone={<TreeDeciduous />} rotulo="Plantas no pomar" valor={ativas.length} detalhe={culturas.length > ativas.length ? `${culturas.length - ativas.length} arquivadas` : 'tipos de planta'} />
+        <Indicador icone={<Sprout />} rotulo="Pés / touceiras" valor={numero(plantas, 0)}
+          detalhe={plantiosSemQtd ? `falta contar em ${plural(plantiosSemQtd, 'local', 'locais')}` : 'somando todos os locais'} />
+        <Indicador icone={<NotebookPen />} rotulo={`Anotações em ${ano}`} valor={doAno(eventos, ano).length} tom="sol" />
         <Indicador icone={<ShoppingBasket />} rotulo={`Colheitas em ${ano}`} valor={colheitasAno.length} tom="terra" />
         <Indicador icone={<Scale />} rotulo={`Colhido em ${ano}`} valor={kg(kgAno.kg)} tom="terra"
-          detalhe={outrasAno.length ? `+ ${outrasAno.map((o) => `${numero(o.total)} ${pomar.unidadesPorCodigo.get(o.unidade)?.nome ?? o.unidade}`).join(', ')}` : 'em kg e gramas'} />
-        <Indicador icone={<Flower2 />} rotulo="Floração prevista no mês" valor={panorama.floracao.length} tom="sol" detalhe="culturas (referência)" />
-        <Indicador icone={<CalendarDays />} rotulo="Colheita prevista no mês" valor={panorama.colheita.length} tom="terra" detalhe="culturas (referência)" />
-        <Indicador icone={<ClipboardList />} rotulo="Cadastros a completar" valor={plantiosSemQtd} detalhe="plantios sem quantidade" />
+          detalhe={outrasAno.length ? `+ ${outrasAno.map((o) => `${numero(o.total)} ${pomar.unidadesPorCodigo.get(o.unidade)?.nome ?? o.unidade}`).join(', ')}` : 'somando kg e gramas'} />
+        <Indicador icone={<Flower2 />} rotulo="Época de florada" valor={panorama.floracao.length} tom="sol" detalhe="plantas neste mês" />
+        <Indicador icone={<CalendarDays />} rotulo="Época de colheita" valor={panorama.colheita.length} tom="terra" detalhe="plantas neste mês" />
+        <Indicador icone={<ClipboardList />} rotulo="Falta informar" valor={plantiosSemQtd} detalhe="quantos pés tem" />
       </section>
 
       {/* O que está acontecendo */}
       <section aria-labelledby="acontecendo" className="grid gap-4">
         <div>
           <h2 id="acontecendo" className="text-[1.5rem]">O que está acontecendo no pomar?</h2>
-          <p className="text-sm text-texto-suave">Cruzamento do calendário cadastrado com os seus registros. Toque em “por quê?” para ver de onde vem cada aviso.</p>
+          <p className="text-sm text-texto-suave">Juntamos a época de cada planta com o que você anotou. Toque em “por quê?” para ver de onde veio cada aviso.</p>
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
-          <ListaDeSugestoes titulo="Floração esperada" icone={<Flower2 />} itens={panorama.floracao} vazio="Nenhuma floração prevista para este mês no calendário." tom="sol" />
-          <ListaDeSugestoes titulo="Período de colheita" icone={<ShoppingBasket />} itens={panorama.colheita} vazio="Nenhuma colheita prevista para este mês no calendário." tom="terra" />
+          <ListaDeSugestoes titulo="Podem estar florindo" icone={<Flower2 />} itens={panorama.floracao} vazio="Pelo calendário, nenhuma planta floresce neste mês." tom="sol" />
+          <ListaDeSugestoes titulo="Época de colheita" icone={<ShoppingBasket />} itens={panorama.colheita} vazio="Pelo calendário, nenhuma planta dá colheita neste mês." tom="terra" />
           <ListaDeSugestoes titulo="Precisam de atenção" icone={<TriangleAlert />} itens={panorama.atencao} tom="erro"
-            vazio="Nenhum plantio marcado como “precisa de atenção” e nenhum problema registrado nos últimos 30 dias." />
+            vazio="Nenhuma planta marcada como “precisa de atenção” e nenhum problema anotado nos últimos 30 dias." />
           <Cartao className="grid content-start gap-4 p-5">
-            <TituloSecao icone={<NotebookPen />} titulo="Últimos registros" acao={<Link to="/acontecimentos" className="mt-1 text-sm font-semibold text-primaria hover:underline">Ver todos</Link>} />
+            <TituloSecao icone={<NotebookPen />} titulo="Últimas anotações" acao={<Link to="/anotacoes" className="mt-1 text-sm font-semibold text-primaria hover:underline">Ver todas</Link>} />
             {recentes.length
               ? <LinhaDoTempo itens={recentes} compacto acoes={false} />
-              : <p className="text-sm text-texto-suave">Ainda não há acontecimentos nem colheitas. Use “Registrar acontecimento” na próxima volta pelo sítio.</p>}
+              : <p className="text-sm text-texto-suave">Nada anotado ainda. Na próxima volta pelo sítio, toque em “Anotar o que aconteceu”.</p>}
           </Cartao>
         </div>
         {panorama.semRegistro.length > 0 && <SemRegistro ids={panorama.semRegistro.map((s) => s.culturaId)} total={ativas.length} />}
@@ -96,10 +96,10 @@ export function Inicio() {
       {/* Próximos acontecimentos */}
       <section aria-labelledby="proximos">
         <Cartao className="grid gap-4 p-5">
-          <TituloSecao id="proximos" icone={<CalendarDays />} titulo="Próximos acontecimentos"
-            descricao="Inícios previstos nos próximos 3 meses, pelo calendário cadastrado. Referências aproximadas, nunca garantia de produção." />
+          <TituloSecao id="proximos" icone={<CalendarDays />} titulo="O que vem por aí"
+            descricao="O que deve começar nos próximos 3 meses, pela época de cada planta. É só uma referência: cada ano pode ser diferente." />
           {previsoes.length === 0 ? (
-            <EstadoVazio icone={<CalendarDays />} titulo="Nada previsto nos próximos meses" texto="Só aparecem aqui culturas com meses marcados no calendário ou ciclos contados a partir da data do plantio." />
+            <EstadoVazio icone={<CalendarDays />} titulo="Nada nos próximos meses" texto="Aqui aparecem as plantas com meses marcados no calendário ou com data de plantio informada." />
           ) : (
             <div className="grid gap-4 md:grid-cols-3">
               {[1, 2, 3].map((n) => {
@@ -108,15 +108,15 @@ export function Inicio() {
                 return (
                   <div key={n} className="grid content-start gap-2">
                     <h3 className="text-base capitalize">{nomeDoMes(m)}</h3>
-                    {doMes.length === 0 && <p className="text-sm text-texto-suave">Nenhum início previsto.</p>}
+                    {doMes.length === 0 && <p className="text-sm text-texto-suave">Nada começa neste mês.</p>}
                     <ul className="grid gap-1.5">
                       {doMes.map((p) => (
                         <li key={`${p.culturaId}-${p.fase}-${p.inicio ?? ''}`}>
                           <Link to={`/pomar/${p.culturaId}`} className="flex min-h-11 items-center gap-2.5 rounded-controle border border-linha px-3 py-2 hover:border-borda">
                             <span aria-hidden className={cn('size-2.5 shrink-0 rounded-full', COR_FASE[p.fase])} />
                             <span className="min-w-0 flex-1 text-sm"><strong className="font-semibold">{culturaPorId.get(p.culturaId)?.nome}</strong> · {FASE[p.fase].toLowerCase()}</span>
-                            {p.origem === 'estimado' && <Selo>estimado</Selo>}
-                            {p.origem === 'plantio' && <Selo tom="verde">pelo plantio</Selo>}
+                            {p.origem === 'estimado' && <Selo>aproximado</Selo>}
+                            {p.origem === 'plantio' && <Selo tom="verde">pela data de plantio</Selo>}
                           </Link>
                         </li>
                       ))}
@@ -171,8 +171,8 @@ function SemRegistro({ ids, total }: { ids: string[]; total: number }) {
   return (
     <Cartao className="flex flex-col gap-3 border-dashed bg-superficie-suave p-5 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <p className="font-semibold">{ids.length === total ? 'Nenhuma cultura tem registros nos últimos 60 dias' : `${plural(ids.length, 'cultura está', 'culturas estão')} sem registros há mais de 60 dias`}</p>
-        <p className="text-sm text-texto-suave">Que tal atualizar as observações na próxima caminhada? Um registro rápido já ajuda a montar o histórico.</p>
+        <p className="font-semibold">{ids.length === total ? 'Nenhuma planta tem anotação nos últimos 60 dias' : `${plural(ids.length, 'planta está', 'plantas estão')} sem anotação há mais de 60 dias`}</p>
+        <p className="text-sm text-texto-suave">Que tal anotar como elas estão na próxima caminhada? Uma anotação rápida já ajuda.</p>
         {aberto && <p className="mt-2 text-sm">{ids.map((id) => culturaPorId.get(id)?.nome).join(', ')}.</p>}
       </div>
       <Botao variante="secundaria" tamanho="compacto" onClick={() => setAberto((a) => !a)} aria-expanded={aberto}>

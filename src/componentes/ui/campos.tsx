@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const base =
-  'w-full min-h-12 rounded-controle border border-borda/70 bg-superficie px-3.5 text-base text-texto placeholder:text-texto-suave/60 ' +
+  'w-full min-w-0 min-h-12 rounded-controle border border-borda/70 bg-superficie px-3.5 text-base text-texto placeholder:text-texto-suave/60 ' +
   'transition-[border-color,box-shadow] duration-150 hover:border-borda aria-[invalid=true]:border-erro disabled:opacity-60';
 
 interface Rotulado { rotulo: string; ajuda?: ReactNode; erro?: string; opcional?: boolean; className?: string }
@@ -11,7 +11,7 @@ interface Rotulado { rotulo: string; ajuda?: ReactNode; erro?: string; opcional?
 /** Rótulo sempre visível, ajuda e erro ligados ao campo (aria-describedby). */
 function Moldura({ rotulo, ajuda, erro, opcional, className, id, children }: Rotulado & { id: string; children: ReactNode }) {
   return (
-    <div className={cn('grid gap-1.5', className)}>
+    <div className={cn('grid min-w-0 content-start gap-1.5', className)}>
       <label htmlFor={id} className="text-sm font-semibold">
         {rotulo}{opcional && <span className="font-normal text-texto-suave"> (opcional)</span>}
       </label>

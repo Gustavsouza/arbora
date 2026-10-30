@@ -25,19 +25,19 @@ export function GerenciarUnidades({ aberto, aoMudar }: { aberto: boolean; aoMuda
     const r = await criarUnidade({ codigo: codigoDaUnidade(v.nome), nome: v.nome, fatorKg: v.fatorKg });
     setSalvando(false);
     if (!r.ok) { toast.error(r.mensagem); return; }
-    toast.success('Unidade criada.', { description: r.valor.nome });
+    toast.success('Medida criada.', { description: r.valor.nome });
     reset();
   }
 
   async function apagar(codigo: string, nome: string) {
-    if (!(await confirmar({ titulo: `Excluir “${nome}”?`, texto: 'A unidade some da lista. Só dá para excluir unidades que não estão em nenhuma colheita.' }))) return;
+    if (!(await confirmar({ titulo: `Apagar “${nome}”?`, acao: 'Apagar', texto: 'A medida sai da lista. Só dá para apagar medidas que não foram usadas em nenhuma colheita.' }))) return;
     const r = await apagarUnidade(codigo);
-    if (r.ok) toast.success('Unidade excluída.'); else toast.error(r.mensagem);
+    if (r.ok) toast.success('Medida apagada.'); else toast.error(r.mensagem);
   }
 
   return (
-    <Dialogo aberto={aberto} aoMudar={aoMudar} titulo="Unidades de medida"
-      descricao="Só kg e gramas entram nos totais em kg. Outras unidades são somadas separadamente, a não ser que você informe quanto pesam.">
+    <Dialogo aberto={aberto} aoMudar={aoMudar} titulo="Medidas"
+      descricao="Só kg e gramas entram no total em kg. Cachos, caixas etc. são somados à parte, a não ser que você diga quanto pesa cada um.">
       <ul className="mb-5 divide-y divide-linha rounded-controle border border-linha">
         {unidades.map((u) => {
           const emUso = colheitas.some((c) => c.unidade === u.codigo);
@@ -46,8 +46,8 @@ export function GerenciarUnidades({ aberto, aoMudar }: { aberto: boolean; aoMuda
               <span className="font-medium">{u.nome}</span>
               <span className="flex items-center gap-2">
                 {u.fatorKg !== null && <Selo tom="verde">{u.codigo === 'kg' ? 'base' : `= ${numero(u.fatorKg, 6)} kg`}</Selo>}
-                {u.padrao ? <Selo>padrão</Selo> : (
-                  <Botao variante="discreta" tamanho="icone" aria-label={`Excluir ${u.nome}`} disabled={emUso} title={emUso ? 'Em uso em colheitas' : undefined}
+                {u.padrao ? <Selo>já vem no app</Selo> : (
+                  <Botao variante="discreta" tamanho="icone" aria-label={`Apagar ${u.nome}`} disabled={emUso} title={emUso ? 'Já usada em colheitas' : undefined}
                     onClick={() => void apagar(u.codigo, u.nome)} className="text-erro hover:bg-erro-suave"><Trash2 /></Botao>
                 )}
               </span>
@@ -56,11 +56,11 @@ export function GerenciarUnidades({ aberto, aoMudar }: { aberto: boolean; aoMuda
         })}
       </ul>
       <form onSubmit={handleSubmit(enviar)} noValidate className="grid gap-3 rounded-controle bg-superficie-suave p-4">
-        <h3 className="text-base">Nova unidade</h3>
+        <h3 className="text-base">Nova medida</h3>
         <Entrada rotulo="Nome" placeholder="Ex.: sacas de 20 kg" {...register('nome')} erro={errors.nome?.message} />
         <Entrada rotulo="Quanto pesa uma, em kg?" opcional inputMode="decimal" placeholder="Ex.: 20" {...register('fatorKg')} erro={errors.fatorKg?.message}
-          ajuda="Preencha só se o peso for sempre o mesmo. Em branco, a unidade nunca entra no total em kg." />
-        <Botao type="submit" carregando={salvando}>Criar unidade</Botao>
+          ajuda="Preencha só se o peso for sempre o mesmo. Em branco, essa medida nunca entra no total em kg." />
+        <Botao type="submit" carregando={salvando}>Criar medida</Botao>
       </form>
     </Dialogo>
   );

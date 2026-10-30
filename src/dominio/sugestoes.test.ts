@@ -10,31 +10,31 @@ const vazio = { plantios: [], eventos: [], colheitas: [] };
 describe('o que está acontecendo no pomar', () => {
   it('floração prevista no mês, explicando de onde vem', () => {
     const p = panoramaDoMes({ ...vazio, culturas: [jab, lar, grav] }, '2026-10-30');
-    expect(p.floracao.map((s) => s.titulo)).toEqual(['Jabuticaba: período esperado de floração']);
+    expect(p.floracao.map((s) => s.titulo)).toEqual(['Jabuticaba: época de florada']);
     expect(p.floracao[0]!.motivo).toContain('Primavera–verão; pode repetir');
-    expect(p.floracao[0]!.motivo).toContain('estimados pela estação');
+    expect(p.floracao[0]!.motivo).toContain('aproximados pela estação');
     expect(p.colheita).toEqual([]);
   });
 
   it('com floração registrada no mês, mostra o registro em vez da pergunta', () => {
     const p = panoramaDoMes({ ...vazio, culturas: [jab], eventos: [evento({ id: 'e', culturaId: 'jab', tipo: 'floracao_inicio', data: '2026-10-12' })] }, '2026-10-30');
-    expect(p.floracao[0]!.titulo).toBe('Floração registrada: Jabuticaba');
+    expect(p.floracao[0]!.titulo).toBe('Jabuticaba: florada anotada');
     expect(p.floracao[0]!.texto).toBe('Primeira floração em 12/10/2026.');
   });
 
   it('colheita prevista sem registro: pergunta, sem afirmar atraso', () => {
     const p = panoramaDoMes({ ...vazio, culturas: [lar] }, '2026-04-10');
-    expect(p.colheita[0]!.texto).toBe('Esta cultura possui período de colheita previsto. Você já observou frutos maduros?');
+    expect(p.colheita[0]!.texto).toBe('Pelo calendário, é época de colheita. Já viu frutos maduros?');
     expect(JSON.stringify(p)).not.toMatch(/atrasad|problema/i);
     const comRegistro = panoramaDoMes({ ...vazio, culturas: [lar], colheitas: [colheita({ id: 'c', culturaId: 'lar', data: '2026-04-02', quantidade: 3, unidade: 'kg' })] }, '2026-04-10');
-    expect(comRegistro.colheita[0]!.texto).toBe('1 colheita registrada neste mês.');
+    expect(comRegistro.colheita[0]!.texto).toBe('1 colheita anotada neste mês.');
   });
 
   it('janela calculada pela data do plantio entra no mês certo', () => {
     const milho = cultura({ id: 'mil', nome: 'Milho', colheitaPadrao: 'apos_plantio', colheitaDias: { min: 70, max: 150 } });
     const p = panoramaDoMes({ ...vazio, culturas: [milho], plantios: [plantio({ id: 'p', culturaId: 'mil', dataPlantio: '2026-07-01' })] }, '2026-10-30');
     expect(p.colheita).toHaveLength(1);
-    expect(p.colheita[0]!.motivo).toContain('09/09/2026 a 28/11/2026');
+    expect(p.colheita[0]!.motivo).toContain('entre 09/09/2026 e 28/11/2026');
   });
 
   it('precisa de atenção: plantio marcado e problemas dos últimos 30 dias', () => {
@@ -65,8 +65,8 @@ describe('sugestões da cultura', () => {
       ...vazio, culturas: [grav],
       plantios: [plantio({ id: 'p', culturaId: 'grav', estagio: 'jovem', dataPlantio: '2025-07-30' }), plantio({ id: 'q', culturaId: 'grav', estagio: 'jovem' })],
     }, '2026-10-30');
-    expect(s.filter((x) => x.chave.startsWith('idade')).map((x) => x.titulo)).toEqual(['Plantio jovem com cerca de 1 ano e 3 meses']);
-    expect(s.some((x) => x.titulo === 'Ainda sem registros')).toBe(true);
+    expect(s.filter((x) => x.chave.startsWith('idade')).map((x) => x.titulo)).toEqual(['Planta nova, com cerca de 1 ano e 3 meses']);
+    expect(s.some((x) => x.titulo === 'Ainda sem anotações')).toBe(true);
   });
 });
 
